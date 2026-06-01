@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prodizzy — AI Chief of Staff</title>
 
-  <!-- Self-hosted fonts — exact same files as the Framer site, no CORS issues -->
+  <!-- Self-hosted fonts — exact same files as the Framer site -->
   <style>
     @font-face { font-family: "Geist"; src: url("fonts/geist-500.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 500 }
     @font-face { font-family: "Geist"; src: url("fonts/geist-700.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 700 }
@@ -16,68 +16,41 @@
   </style>
 
   <style>
-    /* ══════════════════════════════════════════
-       DESIGN TOKENS — exact values from Framer HTML
-       ══════════════════════════════════════════ */
+    /* ── TOKENS ─────────────────────────────── */
     :root {
-      /* Backgrounds — extracted from Framer inline styles */
-      --bg:           rgb(245, 245, 245);   /* page background */
-      --surface:      rgb(250, 250, 250);   /* card / nav background */
+      --bg:           rgb(245, 245, 245);
+      --surface:      rgb(250, 250, 250);
       --white:        rgb(255, 255, 255);
-
-      /* Text — exact Framer token rgb(61,61,61) */
       --text:         rgb(61, 61, 61);
-      --text-60:      rgba(61, 61, 61, 0.60);
-      --text-40:      rgba(61, 61, 61, 0.40);
-      --text-25:      rgba(61, 61, 61, 0.25);
-
-      /* Borders — exact Framer border values */
-      --border-ghost: rgba(61, 61, 61, 0.04);   /* nav / card subtle */
-      --border-soft:  rgba(61, 61, 61, 0.10);   /* inputs, dividers */
-      --border-vis:   rgb(209, 213, 219);        /* visible borders */
-
-      /* Shadows — exact Framer shadow values */
-      --shadow-xs:    0px 1px 3px 0px rgba(0, 0, 0, 0.04);
-      --shadow-sm:    0px 2px 8px 0px rgba(0, 0, 0, 0.04);
-      --shadow-md:    0px 4px 20px 0px rgba(0, 0, 0, 0.07);
-      --shadow-hero:  0px 19px 48px 0px rgba(0, 0, 0, 0.16);
-
-      /* Radii — exact Framer values */
-      --r-sm:   8px;
-      --r:      12px;
-      --r-lg:   16px;
-      --r-pill: 100px;
-
-      /* Brand */
+      --text-60:      rgba(61, 61, 61, .60);
+      --text-40:      rgba(61, 61, 61, .40);
+      --text-25:      rgba(61, 61, 61, .25);
+      --border-ghost: rgba(61, 61, 61, .05);
+      --border-soft:  rgba(61, 61, 61, .12);
+      --border-vis:   rgb(209, 213, 219);
+      --shadow-xs:    0px 1px 3px rgba(0,0,0,.04);
+      --shadow-sm:    0px 2px 8px rgba(0,0,0,.04);
+      --shadow-md:    0px 4px 20px rgba(0,0,0,.07);
+      --r-sm:  8px;
+      --r:     12px;
+      --r-lg:  16px;
+      --r-pill:100px;
       --red:      #E8382A;
       --red-dark: #C42E1F;
-      --red-soft: rgba(232, 56, 42, 0.08);
-
-      /* Status */
-      --green:        #16A34A;
-      --green-bg:     rgba(22, 163, 74, 0.08);
-      --orange:       #D97706;
-
-      /* Typography — exact font stacks from Framer site */
-      --font-head: "Geist", "Inter", "Inter Placeholder", sans-serif;
-      --font-body: "Inter", "Inter Placeholder", sans-serif;
+      --red-soft: rgba(232,56,42,.07);
+      --green:    #16A34A;
+      --green-bg: rgba(22,163,74,.08);
+      --orange:   #D97706;
+      --font-head: "Geist","Geist Placeholder",sans-serif;
+      --font-body: "Inter","Inter Placeholder",sans-serif;
     }
 
-    /* ══════════════════════════════════════════
-       RESET
-       ══════════════════════════════════════════ */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    button, input, select, textarea { font-family: inherit; }
-    a { text-decoration: none; color: inherit; }
+    /* ── RESET ─────────────────────────────── */
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+    button,input,select { font-family:inherit; }
+    a { text-decoration:none; color:inherit; }
 
-    /* ══════════════════════════════════════════
-       BASE
-       ══════════════════════════════════════════ */
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior:smooth; }
     body {
       font-family: var(--font-body);
       font-size: 16px;
@@ -86,21 +59,27 @@
       color: var(--text);
       background: var(--bg);
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      min-height: 100vh;
-      /* Exact OpenType features from the Framer site's Inter preset (cggrin) */
-      font-feature-settings: "blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on;
+      font-feature-settings: "blwf" on,"cv09" on,"cv03" on,"cv04" on,"cv11" on;
     }
 
-    /* ══════════════════════════════════════════
-       VIEW SYSTEM
-       ══════════════════════════════════════════ */
-    .view { display: none; min-height: 100vh; }
-    .view.active { display: block; }
+    /* ── VIEW SYSTEM ─────────────────────── */
+    .view { display:none; }
+    .view.active { display:block; }
 
-    /* ══════════════════════════════════════════
-       FLOATING NAV  (matches Framer site exactly)
-       ══════════════════════════════════════════ */
+    /* ── SHARED: HEADING GRADIENT ─────────── */
+    .grad-head {
+      font-family: var(--font-head);
+      font-weight: 500;
+      line-height: 1.02em;
+      letter-spacing: -0.029em;
+      font-feature-settings: 'blwf' on,'cv09' on,'cv03' on,'cv04' on,'cv11' on;
+      background-image: linear-gradient(0deg, rgb(255,255,255) -71%, rgb(61,61,61) 46%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── SHARED: FLOATING NAV ─────────────── */
     .nav-outer {
       position: sticky;
       top: 12px;
@@ -121,14 +100,8 @@
       background: var(--surface);
       border: 1px solid var(--border-ghost);
       border-radius: var(--r);
-      padding: 14px 24px;
+      padding: 10px 20px;
       box-shadow: var(--shadow-xs);
-    }
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-      flex-shrink: 0;
     }
     .logo-img {
       display: block;
@@ -137,166 +110,100 @@
       object-fit: cover;
       object-position: center 48%;
     }
-    .logo-mark {
-      width: 26px; height: 26px;
-      background: var(--red);
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .nav-step {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-40);
-    }
 
-    /* ══════════════════════════════════════════
-       SHARED: PROGRESS BAR
-       ══════════════════════════════════════════ */
-    .progress-track {
-      width: 100px;
-      height: 3px;
-      background: var(--border-ghost);
-      border-radius: var(--r-pill);
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: var(--red);
-      border-radius: var(--r-pill);
-      transition: width 0.4s cubic-bezier(.4,0,.2,1);
-    }
-
-    /* ══════════════════════════════════════════
-       SHARED: BUTTONS
-       ══════════════════════════════════════════ */
-    .btn {
+    /* ── SHARED: BUTTONS ─────────────────── */
+    .btn-red {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      border: none;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-weight: 600;
-      transition: all 0.14s ease;
-      white-space: nowrap;
-      line-height: 1;
-    }
-    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-    /* Red CTA — matches the Framer site's "Get Early Access" */
-    .btn-red {
+      padding: 13px 26px;
       background: var(--red);
       color: #fff;
-      border-radius: var(--r);
-      padding: 14px 28px;
+      border: none;
+      border-radius: var(--r-pill);
       font-size: 15px;
-      letter-spacing: -0.1px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .14s, transform .1s;
+      letter-spacing: -.1px;
     }
     .btn-red:hover:not(:disabled) { background: var(--red-dark); }
-    .btn-red:active:not(:disabled) { transform: scale(0.985); }
-    .btn-full { width: 100%; justify-content: center; }
-
-    /* Outline button — matches Framer nav "Book a demo" */
+    .btn-red:active:not(:disabled) { transform: scale(.985); }
+    .btn-red:disabled { opacity: .35; cursor: not-allowed; }
     .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 22px;
       background: var(--surface);
       color: var(--text);
       border: 1px solid var(--border-ghost);
       border-radius: var(--r);
-      padding: 13px 24px;
-      font-size: 15px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
       box-shadow: var(--shadow-xs);
+      transition: all .14s;
     }
     .btn-outline:hover { background: var(--bg); border-color: var(--border-soft); }
 
-    /* Ghost */
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-60);
-      border: none;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 10px 0;
-    }
-    .btn-ghost:hover { color: var(--text); }
-
-    /* Dark */
-    .btn-dark {
-      background: var(--text);
-      color: var(--white);
-      border-radius: var(--r-sm);
-      padding: 10px 20px;
-      font-size: 13px;
-    }
-    .btn-dark:hover { background: rgba(61,61,61,0.85); }
-
-    /* ══════════════════════════════════════════
-       SHARED: INPUTS  (matches Framer card inputs)
-       ══════════════════════════════════════════ */
+    /* ── SHARED: INPUTS ─────────────────── */
     .input {
       width: 100%;
-      padding: 14px 18px;
+      padding: 13px 16px;
       background: var(--white);
       border: 1px solid var(--border-vis);
       border-radius: var(--r);
-      font-family: var(--font-body);
       font-size: 15px;
       font-weight: 500;
       color: var(--text);
       outline: none;
-      transition: border-color 0.14s, box-shadow 0.14s;
+      transition: border-color .14s, box-shadow .14s;
       box-shadow: var(--shadow-xs);
       -webkit-appearance: none;
-      appearance: none;
     }
     .input::placeholder { color: var(--text-25); font-weight: 400; }
     .input:focus {
-      border-color: rgba(61,61,61,0.3);
-      box-shadow: 0 0 0 3px rgba(61,61,61,0.05), var(--shadow-xs);
+      border-color: rgba(61,61,61,.3);
+      box-shadow: 0 0 0 3px rgba(61,61,61,.05), var(--shadow-xs);
     }
     select.input {
       cursor: pointer;
       background-image: url("data:image/svg+xml,%3Csvg width='11' height='7' viewBox='0 0 11 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5.5 6L10 1' stroke='%233D3D3D' stroke-opacity='0.4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 16px center;
-      padding-right: 40px;
+      background-position: right 14px center;
+      padding-right: 38px;
     }
-
-    /* ══════════════════════════════════════════
-       SHARED: CARD  (the Framer card style)
-       ══════════════════════════════════════════ */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border-ghost);
-      border-radius: var(--r);
-      box-shadow: var(--shadow-sm);
+    /* Underline input (Typeform style) */
+    .input-line {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid var(--border-soft);
+      outline: none;
+      font-family: var(--font-body);
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--text);
+      padding: 10px 0 14px;
+      transition: border-color .2s;
+      -webkit-appearance: none;
     }
+    .input-line:focus { border-bottom-color: var(--red); }
+    .input-line::placeholder { color: var(--text-25); font-weight: 400; }
 
-    /* ══════════════════════════════════════════
-       CONFETTI
-       ══════════════════════════════════════════ */
+    /* ── CONFETTI ─────────────────────────── */
     #cfx {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9999;
     }
 
-    /* ══════════════════════════════════════════
-       ██ LOGIN VIEW
-       ══════════════════════════════════════════ */
-    #login-view {
-      background: var(--bg);
-    }
-    #login-view .nav-outer {
-      margin-bottom: 0;
-    }
+    /* ════════════════════════════════════════
+       LOGIN VIEW
+    ════════════════════════════════════════ */
+    #login-view { background: var(--bg); }
 
     .login-canvas {
       display: flex;
@@ -307,7 +214,6 @@
       max-width: 520px;
       margin: 0 auto;
     }
-
     .login-eyebrow {
       display: inline-flex;
       align-items: center;
@@ -319,34 +225,16 @@
       font-size: 12px;
       font-weight: 600;
       color: var(--text-60);
-      letter-spacing: 0.2px;
       margin-bottom: 36px;
       box-shadow: var(--shadow-xs);
     }
-    .login-eyebrow-dot {
-      width: 6px; height: 6px;
-      background: var(--red);
-      border-radius: 50%;
-    }
-
+    .eyebrow-dot { width:6px;height:6px;background:var(--red);border-radius:50%; }
     .login-headline {
-      /* Exact Framer preset-14zofr0 values from kIHidKsOe.F1bcVjlq.mjs */
-      font-family: "Geist", "Geist Placeholder", sans-serif;
       font-size: 70px;
-      font-weight: 500;           /* medium, NOT bold — this is key */
-      line-height: 1.02em;
-      letter-spacing: -0.029em;
-      font-feature-settings: 'blwf' on, 'cv09' on, 'cv03' on, 'cv04' on, 'cv11' on;
-      text-wrap: balance;
-      /* Gradient text fill — exact Framer data-text-fill gradient */
-      background-image: linear-gradient(0deg, rgb(255, 255, 255) -71%, rgb(61, 61, 61) 46%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
       margin-bottom: 18px;
     }
-    @media (max-width: 1199px) { .login-headline { font-size: 60px; } }
-    @media (max-width: 767px)  { .login-headline { font-size: 42px; } }
+    @media(max-width:1199px){ .login-headline{ font-size:60px; } }
+    @media(max-width:767px) { .login-headline{ font-size:42px; } }
     .login-sub {
       font-size: 16px;
       font-weight: 500;
@@ -354,15 +242,7 @@
       line-height: 1.65;
       margin-bottom: 52px;
     }
-
-    /* Sign-in module */
-    .login-module {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
+    .login-module { width:100%; display:flex; flex-direction:column; gap:12px; }
     .google-btn {
       display: flex;
       align-items: center;
@@ -373,17 +253,15 @@
       background: var(--surface);
       border: 1px solid var(--border-ghost);
       border-radius: var(--r);
-      font-family: var(--font-body);
       font-size: 15px;
       font-weight: 500;
       color: var(--text);
       cursor: pointer;
-      transition: background 0.14s, border-color 0.14s;
+      transition: background .14s, border-color .14s;
       box-shadow: var(--shadow-xs);
     }
     .google-btn:hover { background: var(--bg); border-color: var(--border-soft); }
-    .google-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
+    .google-btn:disabled { opacity: .5; cursor: not-allowed; }
     .login-divider {
       display: flex;
       align-items: center;
@@ -392,14 +270,9 @@
       font-size: 12px;
       font-weight: 500;
     }
-    .login-divider::before,
-    .login-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border-ghost);
+    .login-divider::before,.login-divider::after {
+      content:''; flex:1; height:1px; background: var(--border-ghost);
     }
-
     .login-terms {
       margin-top: 20px;
       font-size: 12px;
@@ -408,698 +281,410 @@
     }
     .login-terms a { color: var(--text-60); text-decoration: underline; text-underline-offset: 2px; }
 
-    /* ══════════════════════════════════════════
-       ██ ONBOARDING VIEW
-       ══════════════════════════════════════════ */
+    /* ════════════════════════════════════════
+       ONBOARDING — TYPEFORM STYLE
+    ════════════════════════════════════════ */
     #onboarding-view {
       background: var(--bg);
+      min-height: 100vh;
+      position: relative;
     }
 
-    .ob-canvas {
+    /* Fixed top bar: logo left, step label right */
+    .tf-topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      padding: 72px 24px 120px;
-      max-width: 680px;
-      margin: 0 auto;
+      justify-content: space-between;
+      padding: 18px 32px;
+    }
+    .tf-step-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-40);
+      letter-spacing: .3px;
     }
 
-    /* Step header — editorial, not cramped */
-    .ob-header {
+    /* Slides container — scrolls one slide at a time */
+    .tf-slides {
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Each slide: full viewport, flex center */
+    .tf-slide {
+      min-height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 24px 120px;
+    }
+    .tf-slide.active {
+      display: flex;
+      animation: slideUp .32s cubic-bezier(.4,0,.2,1) both;
+    }
+    .tf-slide.exit {
+      animation: slideExit .28s cubic-bezier(.4,0,.2,1) both;
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes slideExit {
+      from { opacity:1; transform:translateY(0); }
+      to   { opacity:0; transform:translateY(-20px); }
+    }
+
+    .tf-content {
       width: 100%;
-      text-align: left;
-      margin-bottom: 40px;
-    }
-    .ob-step-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-40);
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-    .ob-headline {
-      /* Exact Framer heading preset */
-      font-family: "Geist", "Geist Placeholder", sans-serif;
-      font-size: 56px;
-      font-weight: 500;
-      line-height: 1.02em;
-      letter-spacing: -0.029em;
-      font-feature-settings: 'blwf' on, 'cv09' on, 'cv03' on, 'cv04' on, 'cv11' on;
-      text-wrap: balance;
-      background-image: linear-gradient(0deg, rgb(255, 255, 255) -71%, rgb(61, 61, 61) 46%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 12px;
-    }
-    @media (max-width: 1199px) { .ob-headline { font-size: 46px; } }
-    @media (max-width: 767px)  { .ob-headline { font-size: 36px; } }
-    .ob-sub {
-      font-size: 16px;
-      font-weight: 500;
-      color: var(--text-60);
-      line-height: 1.6;
+      max-width: 640px;
     }
 
-    /* The white card holding the form */
-    .ob-card {
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border-ghost);
-      border-radius: var(--r-lg);
-      box-shadow: var(--shadow-md);
-      padding: 44px 48px 40px;
-    }
-
-    /* Step transitions */
-    .ob-step { display: none; }
-    .ob-step.active {
-      display: block;
-      animation: fadeUp 0.28s cubic-bezier(.4,0,.2,1) forwards;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Fields */
-    .fields     { display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px; }
-    .field      { display: flex; flex-direction: column; gap: 7px; }
-    .field-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .field-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-60);
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-    .microcopy {
-      font-size: 12px;
-      color: var(--text-40);
-      margin-bottom: 24px;
-    }
-    .btn-stack {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* ── Step 2: Enrichment ── */
-    .enrich-loader {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 60px 0 52px;
-      gap: 20px;
-      text-align: center;
-    }
-    .spinner {
-      width: 32px; height: 32px;
-      border: 2px solid var(--border-ghost);
-      border-top-color: var(--red);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .enrich-loader-text {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .enrich-loader-sub {
-      font-size: 13px;
-      color: var(--text-40);
-      margin-top: -10px;
-    }
-
-    .enrich-result { display: none; }
-
-    .found-chip {
+    /* Step number badge */
+    .tf-step-badge {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 6px 14px;
-      background: var(--green-bg);
-      border: 1px solid rgba(22,163,74,0.15);
-      border-radius: var(--r-pill);
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--green);
-      margin-bottom: 28px;
-    }
-
-    .enrich-rows { margin-bottom: 32px; }
-    .enrich-row {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--border-ghost);
-    }
-    .enrich-row:first-child { padding-top: 0; }
-    .enrich-row:last-child  { border-bottom: none; padding-bottom: 0; }
-    .enrich-key {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 600;
       color: var(--text-40);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+      letter-spacing: .2px;
     }
-    .enrich-val {
-      font-size: 15px;
-      color: var(--text);
-      line-height: 1.5;
+    .tf-step-badge-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px; height: 22px;
+      border: 1.5px solid var(--border-soft);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
     }
 
-    /* ── Step 3: Priorities ── */
-    .pri-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 28px;
+    /* The question text */
+    .tf-q {
+      font-size: 36px;
+      margin-bottom: 36px;
+      text-wrap: balance;
     }
-    .pri-card {
-      padding: 20px;
-      background: var(--white);
+    @media(max-width:767px) { .tf-q { font-size: 26px; } }
+
+    /* OK button + enter hint row */
+    .tf-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .tf-enter-hint {
+      font-size: 12px;
+      color: var(--text-40);
+      font-weight: 500;
+    }
+    kbd {
+      padding: 2px 7px;
+      background: var(--surface);
       border: 1px solid var(--border-ghost);
-      border-radius: var(--r);
+      border-radius: 5px;
+      font-family: inherit;
+      font-size: 11px;
+      color: var(--text-60);
+      box-shadow: var(--shadow-xs);
+    }
+
+    /* ── Pill select (stage, priorities) ── */
+    .pill-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .pill-opt {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 20px;
+      background: var(--surface);
+      border: 1.5px solid var(--border-ghost);
+      border-radius: var(--r-pill);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-60);
       cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
+      transition: all .15s;
       user-select: none;
     }
-    .pri-card:hover { background: var(--bg); border-color: var(--border-soft); }
-    .pri-card.sel { border-color: var(--red); background: rgba(232,56,42,0.03); }
-    .pri-card.wide { grid-column: 1 / -1; }
-
-    .pri-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .pri-emoji { font-size: 22px; line-height: 1; }
-    .pri-check {
-      width: 18px; height: 18px;
-      border: 1.5px solid var(--border-ghost);
-      border-radius: 50%;
+    .pill-opt:hover { border-color: var(--border-soft); color: var(--text); background: var(--bg); }
+    .pill-opt.sel  { border-color: var(--red); background: var(--red-soft); color: var(--text); }
+    .pill-opt-letter {
+      width: 22px; height: 22px;
+      border: 1.5px solid var(--border-soft);
+      border-radius: 6px;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.14s;
-    }
-    .pri-card.sel .pri-check { background: var(--red); border-color: var(--red); }
-    .pri-check svg { display: none; }
-    .pri-card.sel .pri-check svg { display: block; }
-
-    .pri-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-    .pri-desc  { font-size: 12px; color: var(--text-60); line-height: 1.45; }
-
-    .pri-expand {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: max-height 0.25s ease, opacity 0.2s ease, margin 0.2s ease;
-    }
-    .pri-card.sel .pri-expand {
-      max-height: 80px;
-      opacity: 1;
-      margin-top: 14px;
-    }
-    .pri-expand-label {
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 11px; font-weight: 700;
       color: var(--text-40);
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      margin-bottom: 7px;
+      transition: all .14s;
     }
-    .pri-input {
+    .pill-opt.sel .pill-opt-letter { background: var(--red); border-color: var(--red); color: #fff; }
+
+    /* Priority expand input */
+    .pri-detail {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height .25s ease, opacity .2s ease, margin .2s ease;
+    }
+    .pill-opt.sel + .pri-detail,
+    .pill-opt.sel ~ .pri-detail {
+      /* handled via JS */
+    }
+    .pri-detail.open { max-height: 80px; opacity: 1; margin-top: 8px; margin-bottom: 4px; }
+    .pri-detail-input {
       width: 100%;
-      padding: 9px 14px;
+      padding: 10px 14px;
       background: var(--white);
       border: 1px solid var(--border-ghost);
       border-radius: var(--r-sm);
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 14px; font-weight: 500;
       color: var(--text);
       outline: none;
-      transition: border-color 0.14s;
+      transition: border-color .14s;
     }
-    .pri-input:focus { border-color: var(--border-soft); }
-    .pri-input::placeholder { color: var(--text-25); }
+    .pri-detail-input:focus { border-color: var(--border-soft); }
+    .pri-detail-input::placeholder { color: var(--text-25); }
 
-    /* ── Step 4: Connections ── */
-    .conn-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    /* ── Connection cards ── */
+    .conn-list { display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
     .conn-card {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 18px 20px;
+      padding: 16px 20px;
       background: var(--white);
       border: 1px solid var(--border-ghost);
       border-radius: var(--r);
-      transition: border-color 0.15s;
+      transition: border-color .15s;
     }
-    .conn-card.connected { border-color: rgba(22,163,74,0.2); background: rgba(22,163,74,0.03); }
-    .conn-left { display: flex; align-items: center; gap: 14px; }
-    .conn-icon {
-      width: 38px; height: 38px;
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      font-size: 19px;
-    }
-    .conn-name { font-size: 14px; font-weight: 600; color: var(--text); }
-    .conn-desc { font-size: 12px; color: var(--text-60); margin-top: 2px; }
-
+    .conn-card.connected { border-color: rgba(22,163,74,.2); background: rgba(22,163,74,.02); }
+    .conn-left { display:flex; align-items:center; gap:14px; }
+    .conn-icon { width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0; }
+    .conn-name { font-size:14px;font-weight:600;color:var(--text); }
+    .conn-desc { font-size:12px;color:var(--text-60);margin-top:2px; }
     .conn-btn {
       padding: 8px 18px;
       background: var(--surface);
       border: 1px solid var(--border-ghost);
       border-radius: var(--r-sm);
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      cursor: pointer;
-      transition: all 0.14s;
-      flex-shrink: 0;
+      font-size: 13px;font-weight:600;color:var(--text);
+      cursor:pointer;transition:all .14s;flex-shrink:0;
       box-shadow: var(--shadow-xs);
     }
-    .conn-btn:hover { background: var(--bg); border-color: var(--border-soft); }
-    .conn-btn.done { background: var(--green-bg); border-color: rgba(22,163,74,0.2); color: var(--green); cursor: default; }
-
+    .conn-btn:hover { border-color: var(--border-soft); background: var(--bg); }
+    .conn-btn.done { background: var(--green-bg); border-color: rgba(22,163,74,.2); color: var(--green); cursor:default; }
     .badge-soon {
-      padding: 4px 12px;
-      background: var(--bg);
-      border-radius: var(--r-pill);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-40);
-      flex-shrink: 0;
+      padding:4px 12px;background:var(--bg);border-radius:var(--r-pill);
+      font-size:11px;font-weight:600;color:var(--text-40);flex-shrink:0;
     }
-    .skip-row {
-      text-align: center;
-      padding: 8px 0 0;
-      font-size: 13px;
-      color: var(--text-40);
-      cursor: pointer;
-      transition: color 0.14s;
-    }
-    .skip-row:hover { color: var(--text-60); }
+    .tf-skip { font-size:13px;color:var(--text-40);cursor:pointer;transition:color .14s; }
+    .tf-skip:hover { color:var(--text-60); }
 
-    /* ── Step 5: Success ── */
-    .success-center { text-align: center; }
-    .success-circle {
-      width: 64px; height: 64px;
-      background: var(--red-soft);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 28px;
-      font-size: 28px;
-    }
-
+    /* ── Success slide ── */
+    .success-icon { font-size:40px;margin-bottom:24px; }
     .url-row {
+      display:flex;align-items:center;gap:10px;
+      padding:14px 18px;
+      background:var(--white);
+      border:1px solid var(--border-ghost);
+      border-radius:var(--r);
+      margin:28px 0 16px;
+    }
+    .url-text { flex:1;font-size:14px;font-weight:600;color:var(--text); }
+    .url-text span { color:var(--red); }
+    .copy-btn {
+      padding:7px 14px;background:var(--surface);
+      border:1px solid var(--border-ghost);border-radius:var(--r-sm);
+      font-size:12px;font-weight:600;color:var(--text-60);cursor:pointer;transition:all .14s;flex-shrink:0;
+    }
+    .copy-btn:hover { color:var(--text);border-color:var(--border-soft); }
+    .inbound-box { padding:16px 18px;background:var(--white);border:1px solid var(--border-ghost);border-radius:var(--r);margin-bottom:28px; }
+    .inbound-label { font-size:11px;font-weight:600;color:var(--text-40);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px; }
+    .pill-row { display:flex;flex-wrap:wrap;gap:8px; }
+    .pill {
+      padding:6px 14px;background:var(--surface);border:1px solid var(--border-ghost);
+      border-radius:var(--r-pill);font-size:13px;font-weight:500;color:var(--text-60);
+    }
+
+    /* Fixed bottom progress bar + nav arrows */
+    .tf-footer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      padding: 0 32px 20px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 14px 18px;
-      background: var(--white);
-      border: 1px solid var(--border-ghost);
-      border-radius: var(--r);
-      margin: 28px 0 16px;
-      text-align: left;
+      gap: 16px;
+      pointer-events: none;
     }
-    .url-text {
+    .tf-footer-track {
       flex: 1;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
+      height: 2px;
+      background: var(--border-ghost);
+      border-radius: 100px;
+      overflow: hidden;
     }
-    .url-text span { color: var(--red); }
-    .copy-btn {
-      padding: 7px 14px;
+    .tf-footer-fill {
+      height: 100%;
+      background: var(--red);
+      border-radius: 100px;
+      transition: width .4s cubic-bezier(.4,0,.2,1);
+    }
+    .tf-arrows {
+      display: flex;
+      gap: 6px;
+      pointer-events: all;
+    }
+    .tf-arrow {
+      width: 32px; height: 32px;
       background: var(--surface);
       border: 1px solid var(--border-ghost);
       border-radius: var(--r-sm);
-      font-family: var(--font-body);
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-60);
+      display: flex; align-items: center; justify-content: center;
       cursor: pointer;
-      transition: all 0.14s;
-      flex-shrink: 0;
-    }
-    .copy-btn:hover { color: var(--text); border-color: var(--border-soft); }
-
-    .inbound-box {
-      padding: 18px 20px;
-      background: var(--white);
-      border: 1px solid var(--border-ghost);
-      border-radius: var(--r);
-      margin-bottom: 28px;
-      text-align: left;
-    }
-    .inbound-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-40);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 12px;
-    }
-    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
-    .pill {
-      padding: 6px 14px;
-      background: var(--surface);
-      border: 1px solid var(--border-ghost);
-      border-radius: var(--r-pill);
       font-size: 13px;
-      font-weight: 500;
       color: var(--text-60);
+      transition: all .14s;
+      box-shadow: var(--shadow-xs);
     }
+    .tf-arrow:hover { background: var(--bg); color: var(--text); border-color: var(--border-soft); }
+    .tf-arrow:disabled { opacity: .3; cursor: not-allowed; }
 
-    /* ══════════════════════════════════════════
-       ██ DASHBOARD VIEW
-       ══════════════════════════════════════════ */
-    #dashboard-view {
-      background: var(--bg);
-    }
+    /* ════════════════════════════════════════
+       DASHBOARD VIEW
+    ════════════════════════════════════════ */
+    #dashboard-view { background: var(--bg); }
 
-    /* Dashboard uses same nav as rest */
     .dash-canvas {
       max-width: 900px;
       margin: 0 auto;
       padding: 64px 24px 120px;
     }
-
-    /* Header */
-    .dash-header {
-      margin-bottom: 56px;
-    }
-    .dash-greeting {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-40);
-      letter-spacing: 0.2px;
-      margin-bottom: 10px;
-    }
+    .dash-header { margin-bottom: 56px; }
+    .dash-greeting { font-size:14px;font-weight:600;color:var(--text-40);letter-spacing:.2px;margin-bottom:10px; }
     .dash-title {
-      font-family: "Geist", "Geist Placeholder", sans-serif;
       font-size: 56px;
-      font-weight: 500;
-      line-height: 1.02em;
-      letter-spacing: -0.029em;
-      font-feature-settings: 'blwf' on, 'cv09' on, 'cv03' on, 'cv04' on, 'cv11' on;
-      text-wrap: balance;
-      background-image: linear-gradient(0deg, rgb(255, 255, 255) -71%, rgb(61, 61, 61) 46%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
       margin-bottom: 10px;
     }
-    @media (max-width: 767px) { .dash-title { font-size: 38px; } }
-    .dash-meta {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-40);
-    }
+    @media(max-width:767px){ .dash-title{ font-size:38px; } }
+    .dash-meta { font-size:14px;font-weight:500;color:var(--text-40); }
 
-    /* Section headers */
-    .section-head {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-      margin-top: 48px;
-    }
-    .section-head:first-of-type { margin-top: 0; }
-    .section-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-40);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
+    .section-head { display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:48px; }
+    .section-head:first-of-type { margin-top:0; }
+    .section-label { font-size:11px;font-weight:700;color:var(--text-40);text-transform:uppercase;letter-spacing:.6px; }
     .section-count {
-      padding: 2px 9px;
-      background: var(--surface);
-      border: 1px solid var(--border-ghost);
-      border-radius: var(--r-pill);
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-40);
+      padding:2px 9px;background:var(--surface);border:1px solid var(--border-ghost);
+      border-radius:var(--r-pill);font-size:11px;font-weight:700;color:var(--text-40);
     }
 
-    /* Priority cards — visual language of the Framer feature cards */
-    .p-list { display: flex; flex-direction: column; gap: 8px; }
-
+    .p-list { display:flex;flex-direction:column;gap:8px; }
     .p-card {
-      display: flex;
-      background: var(--surface);
-      border: 1px solid var(--border-ghost);
-      border-radius: var(--r);
-      box-shadow: var(--shadow-sm);
-      overflow: hidden;
-      transition: box-shadow 0.15s, transform 0.15s;
+      display:flex;
+      background:var(--surface);
+      border:1px solid var(--border-ghost);
+      border-radius:var(--r);
+      box-shadow:var(--shadow-sm);
+      overflow:hidden;
+      transition:box-shadow .15s,transform .15s;
     }
-    .p-card:hover {
-      box-shadow: var(--shadow-md);
-      transform: translateY(-1px);
-    }
-
-    /* Priority accent stripe — left border */
-    .p-stripe { width: 3px; flex-shrink: 0; }
-    .p-stripe.high   { background: var(--red); }
-    .p-stripe.med    { background: var(--orange); }
-    .p-stripe.low    { background: var(--border-ghost); }
-
-    .p-body { flex: 1; padding: 22px 28px; min-width: 0; }
-
-    .p-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-    .p-who { flex: 1; min-width: 0; }
-    .p-name {
-      font-family: var(--font-head);
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.3px;
-    }
-    .p-org {
-      font-size: 13px;
-      color: var(--text-40);
-      font-weight: 500;
-      margin-left: 4px;
-    }
-
-    /* Category badge */
+    .p-card:hover { box-shadow:var(--shadow-md);transform:translateY(-1px); }
+    .p-stripe { width:3px;flex-shrink:0; }
+    .p-stripe.high   { background:var(--red); }
+    .p-stripe.med    { background:var(--orange); }
+    .p-stripe.low    { background:var(--border-ghost); }
+    .p-body { flex:1;padding:22px 28px;min-width:0; }
+    .p-top { display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px; }
+    .p-who { flex:1;min-width:0; }
+    .p-name { font-family:var(--font-head);font-size:16px;font-weight:600;color:var(--text);letter-spacing:-.2px; }
+    .p-org  { font-size:13px;color:var(--text-40);font-weight:500;margin-left:4px; }
     .p-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 4px 11px;
-      border-radius: var(--r-pill);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      flex-shrink: 0;
+      display:inline-flex;align-items:center;
+      padding:3px 10px;border-radius:var(--r-pill);
+      font-size:11px;font-weight:700;letter-spacing:.2px;flex-shrink:0;
     }
-    .p-badge.investor   { background: rgba(29,78,216,0.07);  color: #1D4ED8; }
-    .p-badge.candidate  { background: rgba(22,163,74,0.08);  color: var(--green); }
-    .p-badge.partner    { background: rgba(126,34,206,0.07); color: #7E22CE; }
-    .p-badge.creator    { background: rgba(217,119,6,0.08);  color: var(--orange); }
-
-    .p-why {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-60);
-      line-height: 1.6;
-      margin-bottom: 18px;
-    }
-    .p-why strong { color: var(--text); font-weight: 600; }
-
-    .p-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
+    .p-badge.investor  { background:rgba(29,78,216,.07);color:#1D4ED8; }
+    .p-badge.candidate { background:rgba(22,163,74,.08);color:var(--green); }
+    .p-badge.partner   { background:rgba(126,34,206,.07);color:#7E22CE; }
+    .p-badge.creator   { background:rgba(217,119,6,.08);color:var(--orange); }
+    .p-why { font-size:13px;font-weight:500;color:var(--text-60);line-height:1.6;margin-bottom:18px; }
+    .p-why strong { color:var(--text);font-weight:600; }
+    .p-footer { display:flex;align-items:center;justify-content:space-between;gap:12px; }
     .p-action {
-      padding: 9px 18px;
-      background: var(--text);
-      color: var(--white);
-      border: none;
-      border-radius: var(--r-sm);
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.14s;
-      letter-spacing: -0.1px;
+      padding:9px 18px;background:var(--text);color:var(--white);
+      border:none;border-radius:var(--r-sm);font-size:13px;font-weight:600;cursor:pointer;transition:background .14s;
     }
-    .p-action:hover { background: rgba(61,61,61,0.85); }
+    .p-action:hover { background:rgba(61,61,61,.85); }
+    .p-prio { display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-40); }
+    .p-dot { width:6px;height:6px;border-radius:50%; }
+    .p-dot.high { background:var(--red); }
+    .p-dot.med  { background:var(--orange); }
+    .p-dot.low  { background:var(--border-soft); }
 
-    .p-priority {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-40);
-    }
-    .p-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-    }
-    .p-dot.high { background: var(--red); }
-    .p-dot.med  { background: var(--orange); }
-    .p-dot.low  { background: var(--border-soft); }
+    .checklist-card { margin-top:48px;background:var(--surface);border:1px solid var(--border-ghost);border-radius:var(--r);padding:28px 32px; }
+    .checklist-title { font-size:12px;font-weight:700;color:var(--text-40);text-transform:uppercase;letter-spacing:.6px;margin-bottom:18px; }
+    .check-items { display:flex;flex-direction:column;gap:14px; }
+    .check-item { display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500; }
+    .check-item.done { color:var(--text-40); }
+    .check-item.todo { color:var(--text);cursor:pointer; }
+    .check-icon { width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .check-icon.done { background:rgba(22,163,74,.12); }
+    .check-icon.todo { border:1.5px solid var(--border-ghost); }
 
-    /* Checklist card */
-    .checklist-card {
-      margin-top: 48px;
-      background: var(--surface);
-      border: 1px solid var(--border-ghost);
-      border-radius: var(--r);
-      padding: 28px 32px;
-    }
-    .checklist-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-40);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 18px;
-    }
-    .check-items { display: flex; flex-direction: column; gap: 14px; }
-    .check-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 14px;
-      font-weight: 500;
-    }
-    .check-item.done { color: var(--text-40); }
-    .check-item.todo { color: var(--text); cursor: pointer; }
-    .check-icon {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .check-icon.done { background: rgba(22,163,74,0.12); }
-    .check-icon.todo { border: 1.5px solid var(--border-ghost); }
-
-    /* Share nudge */
     .nudge {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 20px 28px;
-      background: var(--text);
-      border-radius: var(--r);
-      margin-bottom: 48px;
-      flex-wrap: wrap;
+      display:flex;align-items:center;justify-content:space-between;gap:20px;
+      padding:20px 28px;background:var(--text);border-radius:var(--r);margin-bottom:48px;flex-wrap:wrap;
     }
-    .nudge-text {
-      font-size: 14px;
-      color: rgba(255,255,255,0.65);
-      line-height: 1.5;
-    }
-    .nudge-text strong { color: #fff; font-weight: 600; }
-    .nudge-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .nudge-text { font-size:14px;color:rgba(255,255,255,.65);line-height:1.5; }
+    .nudge-text strong { color:#fff;font-weight:600; }
+    .nudge-right { display:flex;align-items:center;gap:10px;flex-shrink:0; }
     .nudge-btn {
-      padding: 9px 20px;
-      background: var(--red);
-      color: #fff;
-      border: none;
-      border-radius: var(--r-sm);
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.14s;
+      padding:9px 20px;background:var(--red);color:#fff;border:none;border-radius:var(--r-sm);
+      font-size:13px;font-weight:600;cursor:pointer;transition:background .14s;
     }
-    .nudge-btn:hover { background: var(--red-dark); }
+    .nudge-btn:hover { background:var(--red-dark); }
     .nudge-close {
-      background: none;
-      border: none;
-      color: rgba(255,255,255,0.3);
-      cursor: pointer;
-      font-size: 20px;
-      line-height: 1;
-      padding: 4px;
-      transition: color 0.14s;
+      background:none;border:none;color:rgba(255,255,255,.3);
+      cursor:pointer;font-size:20px;line-height:1;padding:4px;transition:color .14s;
     }
-    .nudge-close:hover { color: rgba(255,255,255,0.7); }
+    .nudge-close:hover { color:rgba(255,255,255,.7); }
 
-    /* Empty / invite state */
     .invite-box {
-      margin-top: 12px;
-      padding: 40px;
-      background: var(--surface);
-      border: 1px dashed var(--border-soft);
-      border-radius: var(--r);
-      text-align: center;
+      margin-top:12px;padding:40px;background:var(--surface);
+      border:1px dashed var(--border-soft);border-radius:var(--r);text-align:center;
     }
-    .invite-emoji { font-size: 28px; margin-bottom: 12px; }
-    .invite-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-    .invite-sub   { font-size: 13px; color: var(--text-60); line-height: 1.55; margin-bottom: 20px; }
+    .invite-emoji { font-size:28px;margin-bottom:12px; }
+    .invite-title { font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px; }
+    .invite-sub { font-size:13px;color:var(--text-60);line-height:1.55;margin-bottom:20px; }
 
-    /* Dashboard nav extras */
-    .nav-dash-links {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+    .nav-dash-links { display:flex;align-items:center;gap:4px; }
     .nav-dash-link {
-      padding: 7px 14px;
-      border-radius: var(--r-sm);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-60);
-      cursor: pointer;
-      transition: background 0.14s, color 0.14s;
+      padding:7px 14px;border-radius:var(--r-sm);
+      font-size:13px;font-weight:500;color:var(--text-60);cursor:pointer;transition:all .14s;
     }
-    .nav-dash-link:hover { background: var(--bg); color: var(--text); }
-    .nav-dash-link.active { background: var(--bg); color: var(--text); font-weight: 600; }
-
+    .nav-dash-link:hover { background:var(--bg);color:var(--text); }
+    .nav-dash-link.active { background:var(--bg);color:var(--text);font-weight:600; }
     .nav-avatar {
-      width: 30px; height: 30px;
-      background: var(--red);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: white;
-      flex-shrink: 0;
+      width:30px;height:30px;background:var(--red);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;font-weight:700;color:white;flex-shrink:0;
     }
 
-    /* ══════════════════════════════════════════
-       RESPONSIVE
-       ══════════════════════════════════════════ */
-    @media (max-width: 640px) {
-      .login-headline { font-size: 38px; letter-spacing: -1px; }
-      .ob-headline    { font-size: 30px; letter-spacing: -0.8px; }
-      .ob-card        { padding: 32px 24px 28px; }
-      .field-row      { grid-template-columns: 1fr; }
-      .pri-grid       { grid-template-columns: 1fr; }
-      .pri-card.wide  { grid-column: auto; }
-      .dash-title     { font-size: 32px; }
-      .dash-canvas    { padding: 40px 20px 80px; }
+    @media(max-width:640px){
+      .tf-topbar { padding:14px 20px; }
+      .tf-footer  { padding:0 20px 16px; }
+      .dash-canvas { padding:40px 20px 80px; }
     }
   </style>
 </head>
@@ -1107,34 +692,28 @@
 
 <canvas id="cfx"></canvas>
 
-<!-- ═══════════════════════════════════════
+<!-- ════════════════════════════════════════
      LOGIN
-═══════════════════════════════════════ -->
+════════════════════════════════════════ -->
 <div id="login-view" class="view active">
-
-  <div class="nav-outer">
+  <div class="nav-outer" style="position:relative;top:auto;padding:20px 20px 0">
     <div class="nav-inner">
-      <a href="index.html" class="nav-logo">
-        <img src="bgremovedlogo.png" alt="Prodizzy" class="logo-img">
-      </a>
-      <div class="nav-right">
+      <a href="index.html"><img src="bgremovedlogo.png" alt="Prodizzy" class="logo-img"></a>
+      <div style="display:flex;align-items:center;gap:12px">
         <span style="font-size:13px;color:var(--text-40);font-weight:500">Already have an account?</span>
-        <button class="btn-outline" style="padding:9px 18px;font-size:13px" onclick="handleLogin()">Sign in</button>
+        <button class="btn-outline" style="padding:8px 18px;font-size:13px" onclick="handleLogin()">Sign in</button>
       </div>
     </div>
   </div>
 
   <div class="login-canvas">
     <div class="login-eyebrow">
-      <span class="login-eyebrow-dot"></span>
+      <span class="eyebrow-dot"></span>
       Now in private beta
     </div>
 
-    <h1 class="login-headline">Your AI Chief of<br>Staff is ready</h1>
-    <p class="login-sub">
-      Prodizzy helps you prioritize every investor,<br>
-      candidate, and partner — ranked by what matters.
-    </p>
+    <h1 class="grad-head login-headline">Your AI Chief of<br>Staff is ready</h1>
+    <p class="login-sub">Prodizzy helps you prioritize every investor,<br>candidate, and partner — ranked by what matters.</p>
 
     <div class="login-module">
       <button class="google-btn" id="google-btn" onclick="handleLogin()">
@@ -1146,191 +725,184 @@
         </svg>
         Continue with Google
       </button>
-
       <div class="login-divider">or</div>
-
-      <button class="btn-outline btn-full" style="font-size:14px;font-weight:500" onclick="handleLogin()">
+      <button class="btn-outline" style="width:100%;font-size:14px;font-weight:500;padding:14px 24px" onclick="handleLogin()">
         Sign in with email
       </button>
     </div>
 
-    <p class="login-terms">
-      By signing in you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>
-      No credit card required.
-    </p>
+    <p class="login-terms">By signing in you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.<br>No credit card required.</p>
   </div>
-
 </div>
 
 
-<!-- ═══════════════════════════════════════
-     ONBOARDING
-═══════════════════════════════════════ -->
+<!-- ════════════════════════════════════════
+     ONBOARDING — TYPEFORM STYLE
+════════════════════════════════════════ -->
 <div id="onboarding-view" class="view">
 
-  <div class="nav-outer">
-    <div class="nav-inner">
-      <div class="nav-logo">
-        <img src="bgremovedlogo.png" alt="Prodizzy" class="logo-img">
-      </div>
-      <div class="nav-right" style="gap:12px">
-        <span class="nav-step" id="ob-label">Step 1 of 5</span>
-        <div class="progress-track">
-          <div class="progress-fill" id="ob-fill" style="width:20%"></div>
-        </div>
-      </div>
-    </div>
+  <!-- Fixed top bar -->
+  <div class="tf-topbar">
+    <img src="bgremovedlogo.png" alt="Prodizzy" class="logo-img">
+    <span class="tf-step-label" id="tf-label">1 / 6</span>
   </div>
 
-  <div class="ob-canvas">
+  <!-- Slides -->
+  <div class="tf-slides" id="tf-slides">
 
-    <!-- Dynamic header (updated per step) -->
-    <div class="ob-header" id="ob-header">
-      <div class="ob-step-tag" id="ob-tag">
-        <div class="login-eyebrow-dot"></div>
-        Step 1 of 5
+    <!-- SLIDE 1: Company name -->
+    <div class="tf-slide active" id="tf-1">
+      <div class="tf-content">
+        <div class="tf-step-badge">
+          <div class="tf-step-badge-num">1</div>
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M1 5h12M8 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 class="grad-head tf-q">What's your company<br>called?</h2>
+        <input class="input-line" id="s1-name" type="text" placeholder="Acme Inc."
+               autocomplete="organization" autofocus oninput="checkS1()">
+        <div class="tf-actions">
+          <button class="btn-red" id="s1-btn" onclick="goSlide(2)" disabled>
+            OK
+            <svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5h10M7 1l4 4-4 4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="tf-enter-hint">press <kbd>Enter ↵</kbd></span>
+        </div>
       </div>
-      <h2 class="ob-headline" id="ob-headline">Tell us about<br>your company</h2>
-      <p class="ob-sub" id="ob-sub">We'll personalize Prodizzy around your priorities.</p>
     </div>
 
-    <div class="ob-card">
-
-      <!-- ── STEP 1 ── -->
-      <div class="ob-step active" id="step-1">
-        <div class="fields">
-          <div class="field">
-            <label class="field-label" for="f-name">Company name</label>
-            <input id="f-name" class="input" type="text" placeholder="Acme Inc."
-                   autocomplete="organization" autofocus oninput="checkS1()">
-          </div>
-          <div class="field">
-            <label class="field-label" for="f-url">Website URL</label>
-            <input id="f-url" class="input" type="text" placeholder="acme.com" oninput="checkS1()">
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label class="field-label" for="f-stage">Stage</label>
-              <select id="f-stage" class="input" onchange="checkS1()">
-                <option value="">Select…</option>
-                <option>Idea</option>
-                <option>Pre-seed</option>
-                <option>Seed</option>
-                <option>Series A</option>
-                <option>Growth</option>
-              </select>
-            </div>
-            <div class="field">
-              <label class="field-label" for="f-industry">Industry</label>
-              <input id="f-industry" class="input" type="text" placeholder="e.g. SaaS, FinTech" oninput="checkS1()">
-            </div>
-          </div>
+    <!-- SLIDE 2: Website -->
+    <div class="tf-slide" id="tf-2">
+      <div class="tf-content">
+        <div class="tf-step-badge">
+          <div class="tf-step-badge-num">2</div>
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M1 5h12M8 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <p class="microcopy">You can edit this anytime in settings.</p>
-        <button class="btn btn-red btn-full" id="s1-btn" onclick="goStep(2)" disabled>
-          Continue
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8.5 3.5L12 7l-3.5 3.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-
-      <!-- ── STEP 2 ── -->
-      <div class="ob-step" id="step-2">
-        <div class="enrich-loader" id="enrich-loader">
-          <div class="spinner"></div>
-          <div class="enrich-loader-text">Understanding your company…</div>
-          <div class="enrich-loader-sub">Scanning your website and building context</div>
-        </div>
-        <div class="enrich-result" id="enrich-result">
-          <div class="found-chip">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l2.5 2.5L10 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Company context found
-          </div>
-          <div class="enrich-rows" id="enrich-rows"></div>
-          <div class="btn-stack">
-            <button class="btn btn-red btn-full" onclick="goStep(3)">Looks good →</button>
-            <button class="btn btn-ghost" onclick="goStep(1)">Edit details</button>
-          </div>
+        <h2 class="grad-head tf-q">What's your website?</h2>
+        <input class="input-line" id="s2-url" type="text" placeholder="acme.com" oninput="checkS2()">
+        <div class="tf-actions">
+          <button class="btn-red" id="s2-btn" onclick="goSlide(3)" disabled>
+            OK
+            <svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5h10M7 1l4 4-4 4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="tf-enter-hint">press <kbd>Enter ↵</kbd></span>
         </div>
       </div>
+    </div>
 
-      <!-- ── STEP 3 ── -->
-      <div class="ob-step" id="step-3">
-        <div class="pri-grid" id="pri-grid"></div>
-        <button class="btn btn-red btn-full" id="s3-btn" onclick="goStep(4)" disabled>
-          Continue
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8.5 3.5L12 7l-3.5 3.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+    <!-- SLIDE 3: Stage -->
+    <div class="tf-slide" id="tf-3">
+      <div class="tf-content">
+        <div class="tf-step-badge">
+          <div class="tf-step-badge-num">3</div>
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M1 5h12M8 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 class="grad-head tf-q">What stage is<br>your company?</h2>
+        <div class="pill-options" id="stage-pills">
+          <div class="pill-opt" data-val="Idea" onclick="selectStage(this)"><span class="pill-opt-letter">A</span>Idea</div>
+          <div class="pill-opt" data-val="Pre-seed" onclick="selectStage(this)"><span class="pill-opt-letter">B</span>Pre-seed</div>
+          <div class="pill-opt" data-val="Seed" onclick="selectStage(this)"><span class="pill-opt-letter">C</span>Seed</div>
+          <div class="pill-opt" data-val="Series A" onclick="selectStage(this)"><span class="pill-opt-letter">D</span>Series A</div>
+          <div class="pill-opt" data-val="Growth" onclick="selectStage(this)"><span class="pill-opt-letter">E</span>Growth</div>
+        </div>
+        <div class="tf-actions" style="margin-top:32px">
+          <button class="btn-red" id="s3-btn" onclick="goSlide(4)" disabled>
+            OK
+            <svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5h10M7 1l4 4-4 4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
       </div>
+    </div>
 
-      <!-- ── STEP 4 ── -->
-      <div class="ob-step" id="step-4">
+    <!-- SLIDE 4: Priorities -->
+    <div class="tf-slide" id="tf-4">
+      <div class="tf-content">
+        <div class="tf-step-badge">
+          <div class="tf-step-badge-num">4</div>
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M1 5h12M8 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 class="grad-head tf-q">What matters most<br>right now?</h2>
+        <p style="font-size:14px;color:var(--text-60);margin-bottom:28px;margin-top:-20px">Pick all that apply.</p>
+        <div id="pri-wrap" style="display:flex;flex-direction:column;gap:10px;margin-bottom:4px">
+          <!-- populated by JS -->
+        </div>
+        <div class="tf-actions" style="margin-top:28px">
+          <button class="btn-red" id="s4-btn" onclick="goSlide(5)" disabled>
+            OK
+            <svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5h10M7 1l4 4-4 4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="tf-enter-hint">press <kbd>Enter ↵</kbd></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Connections -->
+    <div class="tf-slide" id="tf-5">
+      <div class="tf-content">
+        <div class="tf-step-badge">
+          <div class="tf-step-badge-num">5</div>
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M1 5h12M8 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 class="grad-head tf-q">Connect your<br>workflows</h2>
+        <p style="font-size:14px;color:var(--text-60);margin-bottom:28px;margin-top:-20px">Optional — add later anytime.</p>
         <div class="conn-list">
           <div class="conn-card" id="cc-gmail">
             <div class="conn-left">
-              <div class="conn-icon" style="background:rgba(232,56,42,0.07)">
+              <div class="conn-icon" style="background:rgba(232,56,42,.07)">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="13" rx="2" stroke="#E8382A" stroke-width="1.5"/><path d="M2 7l8 6 8-6" stroke="#E8382A" stroke-width="1.5" stroke-linecap="round"/></svg>
               </div>
-              <div>
-                <div class="conn-name">Gmail</div>
-                <div class="conn-desc">Surface important conversations</div>
-              </div>
+              <div><div class="conn-name">Gmail</div><div class="conn-desc">Surface important conversations</div></div>
             </div>
-            <button class="conn-btn" id="cb-gmail" onclick="connectService('gmail')">Connect</button>
+            <button class="conn-btn" id="cb-gmail" onclick="connectSvc('gmail')">Connect</button>
           </div>
           <div class="conn-card" id="cc-calendly">
             <div class="conn-left">
-              <div class="conn-icon" style="background:rgba(22,163,74,0.07)">
+              <div class="conn-icon" style="background:rgba(22,163,74,.07)">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="15" rx="2" stroke="#16A34A" stroke-width="1.5"/><path d="M2 8h16M7 1v4M13 1v4" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round"/></svg>
               </div>
-              <div>
-                <div class="conn-name">Calendly</div>
-                <div class="conn-desc">Sync meetings and scheduling</div>
-              </div>
+              <div><div class="conn-name">Calendly</div><div class="conn-desc">Sync meetings and scheduling</div></div>
             </div>
-            <button class="conn-btn" id="cb-calendly" onclick="connectService('calendly')">Connect</button>
+            <button class="conn-btn" id="cb-calendly" onclick="connectSvc('calendly')">Connect</button>
           </div>
           <div class="conn-card" id="cc-gcal">
             <div class="conn-left">
-              <div class="conn-icon" style="background:rgba(29,78,216,0.07)">
+              <div class="conn-icon" style="background:rgba(29,78,216,.07)">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="15" rx="2" stroke="#1D4ED8" stroke-width="1.5"/><path d="M2 8h16M7 1v4M13 1v4" stroke="#1D4ED8" stroke-width="1.5" stroke-linecap="round"/></svg>
               </div>
-              <div>
-                <div class="conn-name">Google Calendar</div>
-                <div class="conn-desc">Meeting context and history</div>
-              </div>
+              <div><div class="conn-name">Google Calendar</div><div class="conn-desc">Meeting context and history</div></div>
             </div>
-            <button class="conn-btn" id="cb-gcal" onclick="connectService('gcal')">Connect</button>
+            <button class="conn-btn" id="cb-gcal" onclick="connectSvc('gcal')">Connect</button>
           </div>
-          <div class="conn-card" id="cc-li">
+          <div class="conn-card">
             <div class="conn-left">
-              <div class="conn-icon" style="background:rgba(29,78,216,0.07)">
+              <div class="conn-icon" style="background:rgba(29,78,216,.07)">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1.5" y="1.5" width="17" height="17" rx="3" stroke="#1D4ED8" stroke-width="1.5"/><path d="M5.5 8.5v6M5.5 5.5v.5M9 14.5v-3.5c0-1.1.9-2 2-2s2 .9 2 2v3.5M9 8.5v6" stroke="#1D4ED8" stroke-width="1.5" stroke-linecap="round"/></svg>
               </div>
-              <div>
-                <div class="conn-name">LinkedIn</div>
-                <div class="conn-desc">Relationship context and signals</div>
-              </div>
+              <div><div class="conn-name">LinkedIn</div><div class="conn-desc">Relationship context and signals</div></div>
             </div>
             <span class="badge-soon">Coming soon</span>
           </div>
         </div>
-        <button class="btn btn-red btn-full" onclick="goStep(5)">
-          Continue
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8.5 3.5L12 7l-3.5 3.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="skip-row" onclick="goStep(5)">Skip for now</div>
-      </div>
-
-      <!-- ── STEP 5 ── -->
-      <div class="ob-step" id="step-5">
-        <div class="success-center">
-          <div class="success-circle">🎯</div>
+        <div class="tf-actions">
+          <button class="btn-red" onclick="goSlide(6)">
+            Continue
+            <svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5h10M7 1l4 4-4 4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="tf-skip" onclick="goSlide(6)">Skip for now</span>
         </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: You're all set -->
+    <div class="tf-slide" id="tf-6">
+      <div class="tf-content" style="text-align:center">
+        <div class="success-icon">🎯</div>
+        <h2 class="grad-head tf-q" style="text-align:center">Your Prodizzy page<br>is ready</h2>
+        <p style="font-size:14px;color:var(--text-60);line-height:1.6;margin-bottom:0;margin-top:-16px">Share this instead of scattered DMs.<br>Every inbound gets ranked automatically.</p>
         <div class="url-row">
           <div class="url-text">prodizzy.ai/<span id="co-slug">your-company</span></div>
           <button class="copy-btn" onclick="doCopy(this)">Copy</button>
         </div>
-        <div class="inbound-box">
+        <div class="inbound-box" style="text-align:left">
           <div class="inbound-label">People can reach you as</div>
           <div class="pill-row">
             <span class="pill">Investor</span>
@@ -1340,66 +912,64 @@
             <span class="pill">Other</span>
           </div>
         </div>
-        <button class="btn btn-red btn-full" onclick="openDash()">
+        <button class="btn-red" style="width:100%;justify-content:center" onclick="openDash()">
           Open Dashboard
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8.5 3.5L12 7l-3.5 3.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5h10M7 1l4 4-4 4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
+    </div>
 
-    </div><!-- /ob-card -->
-  </div><!-- /ob-canvas -->
+  </div><!-- /tf-slides -->
+
+  <!-- Bottom progress + arrows -->
+  <div class="tf-footer">
+    <div class="tf-footer-track">
+      <div class="tf-footer-fill" id="tf-fill" style="width:16.6%"></div>
+    </div>
+    <div class="tf-arrows">
+      <button class="tf-arrow" id="tf-prev" onclick="prevSlide()" disabled>↑</button>
+      <button class="tf-arrow" id="tf-next" onclick="advanceSlide()">↓</button>
+    </div>
+  </div>
+
 </div><!-- /onboarding-view -->
 
 
-<!-- ═══════════════════════════════════════
+<!-- ════════════════════════════════════════
      DASHBOARD
-═══════════════════════════════════════ -->
+════════════════════════════════════════ -->
 <div id="dashboard-view" class="view">
-
   <div class="nav-outer">
     <div class="nav-inner">
-      <div class="nav-logo">
-        <img src="bgremovedlogo.png" alt="Prodizzy" class="logo-img">
-      </div>
+      <img src="bgremovedlogo.png" alt="Prodizzy" class="logo-img">
       <div class="nav-dash-links">
         <span class="nav-dash-link active">Dashboard</span>
-        <span class="nav-dash-link">Inbound
-          <span style="margin-left:4px;background:rgba(232,56,42,0.1);color:var(--red);padding:1px 6px;border-radius:100px;font-size:10px;font-weight:700">3</span>
-        </span>
+        <span class="nav-dash-link">Inbound <span style="margin-left:3px;background:rgba(232,56,42,.1);color:var(--red);padding:1px 6px;border-radius:100px;font-size:10px;font-weight:700">3</span></span>
         <span class="nav-dash-link">Contacts</span>
         <span class="nav-dash-link">Integrations</span>
       </div>
-      <div class="nav-right" style="gap:12px">
+      <div style="display:flex;align-items:center;gap:12px">
         <div class="nav-avatar" id="nav-avatar">P</div>
       </div>
     </div>
   </div>
 
   <div class="dash-canvas">
-
-    <!-- Share nudge -->
     <div class="nudge" id="nudge">
-      <div class="nudge-text">
-        <strong>Share your Prodizzy page</strong> — let investors, candidates, and partners reach you in one place. Every submission gets ranked automatically.
-      </div>
+      <div class="nudge-text"><strong>Share your Prodizzy page</strong> — let investors, candidates, and partners reach you in one place.</div>
       <div class="nudge-right">
         <button class="nudge-btn" onclick="copyDashUrl()">Copy link</button>
         <button class="nudge-close" onclick="document.getElementById('nudge').style.display='none'">×</button>
       </div>
     </div>
 
-    <!-- Header -->
     <div class="dash-header">
       <div class="dash-greeting" id="d-greeting">Good morning</div>
-      <h1 class="dash-title">Today's Priorities</h1>
+      <h1 class="grad-head dash-title">Today's Priorities</h1>
       <div class="dash-meta" id="d-meta">Monday, June 2 · 5 items need your attention</div>
     </div>
 
-    <!-- High -->
-    <div class="section-head">
-      <span class="section-label">High priority</span>
-      <span class="section-count">2</span>
-    </div>
+    <div class="section-head"><span class="section-label">High priority</span><span class="section-count">2</span></div>
     <div class="p-list">
       <div class="p-card">
         <div class="p-stripe high"></div>
@@ -1408,11 +978,8 @@
             <div class="p-who"><span class="p-name">Sarah Chen</span><span class="p-org">· Sequoia Capital</span></div>
             <span class="p-badge investor">Investor</span>
           </div>
-          <p class="p-why"><strong>Warm intro through David Tisch</strong> — aligned with your Series A goal. She's actively deploying in B2B SaaS. No reply sent in 5 days — window may be closing.</p>
-          <div class="p-footer">
-            <button class="p-action">Schedule meeting →</button>
-            <div class="p-priority"><span class="p-dot high"></span>High priority</div>
-          </div>
+          <p class="p-why"><strong>Warm intro through David Tisch</strong> — aligned with your Series A goal. Actively deploying in B2B SaaS. No reply sent in 5 days.</p>
+          <div class="p-footer"><button class="p-action">Schedule meeting →</button><div class="p-prio"><span class="p-dot high"></span>High priority</div></div>
         </div>
       </div>
       <div class="p-card">
@@ -1422,33 +989,23 @@
             <div class="p-who"><span class="p-name">Marcus Rivera</span><span class="p-org">· Senior Engineer</span></div>
             <span class="p-badge candidate">Candidate</span>
           </div>
-          <p class="p-why"><strong>Referred by your CTO</strong> — full-stack, 6 years exp. Currently interviewing at 2 other companies. Open to offers for ~2 more weeks.</p>
-          <div class="p-footer">
-            <button class="p-action">Send intro email →</button>
-            <div class="p-priority"><span class="p-dot high"></span>High priority</div>
-          </div>
+          <p class="p-why"><strong>Referred by your CTO</strong> — full-stack, 6 years exp. Interviewing elsewhere. Open to offers for ~2 more weeks.</p>
+          <div class="p-footer"><button class="p-action">Send intro email →</button><div class="p-prio"><span class="p-dot high"></span>High priority</div></div>
         </div>
       </div>
     </div>
 
-    <!-- Medium -->
-    <div class="section-head">
-      <span class="section-label">Medium priority</span>
-      <span class="section-count">2</span>
-    </div>
+    <div class="section-head" style="margin-top:40px"><span class="section-label">Medium priority</span><span class="section-count">2</span></div>
     <div class="p-list">
       <div class="p-card">
         <div class="p-stripe med"></div>
         <div class="p-body">
           <div class="p-top">
-            <div class="p-who"><span class="p-name">Partnership Inquiry</span><span class="p-org">· Notion</span></div>
+            <div class="p-who"><span class="p-name">Partnership Request</span><span class="p-org">· Notion</span></div>
             <span class="p-badge partner">Partnership</span>
           </div>
-          <p class="p-why"><strong>Potential integration partner</strong> — 2M+ user overlap with your ICP. Submitted via your Prodizzy page 2 days ago. No action yet.</p>
-          <div class="p-footer">
-            <button class="p-action">Review request →</button>
-            <div class="p-priority"><span class="p-dot med"></span>Medium priority</div>
-          </div>
+          <p class="p-why"><strong>Potential integration partner</strong> — 2M+ user overlap with your ICP. Submitted via your Prodizzy page 2 days ago.</p>
+          <div class="p-footer"><button class="p-action">Review request →</button><div class="p-prio"><span class="p-dot med"></span>Medium priority</div></div>
         </div>
       </div>
       <div class="p-card">
@@ -1458,20 +1015,13 @@
             <div class="p-who"><span class="p-name">James Willard</span><span class="p-org">· Angel Investor</span></div>
             <span class="p-badge investor">Investor</span>
           </div>
-          <p class="p-why"><strong>Met at YC Demo Day last week</strong> — expressed strong interest in your space. Writes $50K–$250K checks. 8 days since meeting, no follow-up sent.</p>
-          <div class="p-footer">
-            <button class="p-action">Follow up now →</button>
-            <div class="p-priority"><span class="p-dot med"></span>Medium priority</div>
-          </div>
+          <p class="p-why"><strong>Met at YC Demo Day last week</strong> — $50K–$250K checks. 8 days since meeting, no follow-up sent.</p>
+          <div class="p-footer"><button class="p-action">Follow up now →</button><div class="p-prio"><span class="p-dot med"></span>Medium priority</div></div>
         </div>
       </div>
     </div>
 
-    <!-- New -->
-    <div class="section-head">
-      <span class="section-label">New this week</span>
-      <span class="section-count">1</span>
-    </div>
+    <div class="section-head" style="margin-top:40px"><span class="section-label">New this week</span><span class="section-count">1</span></div>
     <div class="p-list">
       <div class="p-card">
         <div class="p-stripe low"></div>
@@ -1480,212 +1030,181 @@
             <div class="p-who"><span class="p-name">Product Roundup Feature</span><span class="p-org">· Creator DM</span></div>
             <span class="p-badge creator">Distribution</span>
           </div>
-          <p class="p-why"><strong>High-traffic creator, 50K followers</strong> — wants to feature you in their weekly product roundup. Easy distribution win if you respond today.</p>
-          <div class="p-footer">
-            <button class="p-action">Respond to DM →</button>
-            <div class="p-priority"><span class="p-dot low"></span>New</div>
-          </div>
+          <p class="p-why"><strong>High-traffic creator, 50K followers</strong> — wants to feature you in their weekly roundup. Easy win if you reply today.</p>
+          <div class="p-footer"><button class="p-action">Respond to DM →</button><div class="p-prio"><span class="p-dot low"></span>New</div></div>
         </div>
       </div>
     </div>
 
-    <!-- Invite / empty state -->
     <div class="invite-box">
       <div class="invite-emoji">📬</div>
       <div class="invite-title">More will surface as you connect</div>
-      <div class="invite-sub">
-        Share your Prodizzy page so investors, hires, and partners<br>
-        can reach you in a structured, ranked way.
-      </div>
-      <button class="btn-outline" style="font-size:13px;padding:9px 20px" onclick="copyDashUrl()">
-        Copy prodizzy.ai/<span id="dash-slug">your-company</span>
-      </button>
+      <div class="invite-sub">Share your Prodizzy page so investors, hires, and partners<br>can reach you in a structured, ranked way.</div>
+      <button class="btn-outline" style="font-size:13px;padding:9px 20px" onclick="copyDashUrl()">Copy prodizzy.ai/<span id="dash-slug">your-company</span></button>
     </div>
 
-    <!-- Setup checklist -->
     <div class="checklist-card">
       <div class="checklist-title">Setup checklist</div>
       <div class="check-items">
         <div class="check-item done">
-          <div class="check-icon done">
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
+          <div class="check-icon done"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           Company setup complete
         </div>
         <div class="check-item done">
-          <div class="check-icon done">
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
+          <div class="check-icon done"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           Priorities set
         </div>
-        <div class="check-item todo" onclick="copyDashUrl()">
-          <div class="check-icon todo"></div>
-          Share your Prodizzy page
-        </div>
-        <div class="check-item todo" onclick="alert('Go to Integrations to connect Gmail')">
-          <div class="check-icon todo"></div>
-          Connect Gmail to surface more
-        </div>
+        <div class="check-item todo" onclick="copyDashUrl()"><div class="check-icon todo"></div>Share your Prodizzy page</div>
+        <div class="check-item todo"><div class="check-icon todo"></div>Connect Gmail to surface more</div>
       </div>
     </div>
-
-  </div><!-- /dash-canvas -->
-</div><!-- /dashboard-view -->
-
+  </div>
+</div>
 
 <script>
-/* ─────────────────────────────────────
-   STATE
-───────────────────────────────────── */
+/* ── STATE ─────────────────────── */
 const S = {
-  company: { name:'', url:'', stage:'', industry:'' },
+  slide: 1,
+  total: 6,
+  company: { name:'', url:'', stage:'' },
   priorities: new Set(),
   connections: new Set()
 };
 
-/* ─────────────────────────────────────
-   VIEW SWITCHING
-───────────────────────────────────── */
+/* ── VIEW ─────────────────────── */
 function show(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'instant' });
+  window.scrollTo({ top:0, behavior:'instant' });
 }
 
-/* ─────────────────────────────────────
-   LOGIN
-───────────────────────────────────── */
+/* ── LOGIN ─────────────────────── */
 function handleLogin() {
   const btn = document.getElementById('google-btn');
   btn.disabled = true;
-  btn.innerHTML = '<div style="width:15px;height:15px;border:2px solid rgba(61,61,61,0.15);border-top-color:rgba(61,61,61,0.5);border-radius:50%;animation:spin .7s linear infinite"></div>&nbsp;Signing in…';
-  setTimeout(() => { show('onboarding-view'); goStep(1); }, 1100);
+  btn.innerHTML = '<div style="width:15px;height:15px;border:2px solid rgba(61,61,61,.15);border-top-color:rgba(61,61,61,.5);border-radius:50%;animation:spin .7s linear infinite"></div>&nbsp;Signing in…';
+  setTimeout(() => { show('onboarding-view'); buildPriCards(); focusSlide(1); }, 1100);
 }
 
-/* ─────────────────────────────────────
-   ONBOARDING STEP MACHINE
-───────────────────────────────────── */
-const STEP_META = [
-  null,
-  { tag:'Step 1 of 5', h:'Tell us about<br>your company',    sub:'We\'ll personalize Prodizzy around your priorities.' },
-  { tag:'Step 2 of 5', h:'We found<br>your company',         sub:'Review and edit anything that looks off.' },
-  { tag:'Step 3 of 5', h:'What matters most<br>right now?',  sub:'Select all that apply. We\'ll surface the right people.' },
-  { tag:'Step 4 of 5', h:'Connect your<br>workflows',        sub:'Optional — but helps Prodizzy surface more.' },
-  { tag:'Step 5 of 5', h:'Your Prodizzy page<br>is ready',   sub:'Share this instead of scattered DMs and emails.' },
-];
+/* ── ONBOARDING SLIDES ─────────── */
+function goSlide(n) {
+  if (n < 1 || n > S.total) return;
+  const cur = document.getElementById('tf-' + S.slide);
+  const nxt = document.getElementById('tf-' + n);
+  if (!nxt) return;
 
-function goStep(n) {
-  document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById('step-' + n);
-  if (!el) return;
-  el.classList.add('active');
+  cur.classList.remove('active');
+  nxt.classList.add('active');
+  S.slide = n;
 
   // Progress
-  document.getElementById('ob-label').textContent = `Step ${n} of 5`;
-  document.getElementById('ob-fill').style.width  = `${(n/5)*100}%`;
+  const pct = (n / S.total) * 100;
+  document.getElementById('tf-fill').style.width = pct + '%';
+  document.getElementById('tf-label').textContent = n + ' / ' + S.total;
 
-  // Header copy
-  const m = STEP_META[n];
-  document.getElementById('ob-tag').innerHTML      = '<div class="login-eyebrow-dot"></div>' + m.tag;
-  document.getElementById('ob-headline').innerHTML = m.h;
-  document.getElementById('ob-sub').textContent    = m.sub;
+  // Arrow states
+  document.getElementById('tf-prev').disabled = (n === 1);
+  document.getElementById('tf-next').disabled = (n === S.total);
 
-  // Step-specific logic
-  if (n === 2) runEnrich();
-  if (n === 3) buildPriGrid();
-  if (n === 5) {
+  // Slide 6 confetti
+  if (n === 6) {
     const slug = mkSlug(S.company.name);
     document.getElementById('co-slug').textContent = slug;
-    setTimeout(confetti, 400);
+    setTimeout(confetti, 350);
   }
+
+  focusSlide(n);
+  window.scrollTo({ top:0, behavior:'smooth' });
 }
 
-/* ─────────────────────────────────────
-   STEP 1 — VALIDATION
-───────────────────────────────────── */
-function checkS1() {
-  S.company.name     = document.getElementById('f-name').value.trim();
-  S.company.url      = document.getElementById('f-url').value.trim();
-  S.company.stage    = document.getElementById('f-stage').value;
-  S.company.industry = document.getElementById('f-industry').value.trim();
-  const ok = S.company.name.length >= 2 && S.company.url.length >= 3
-          && S.company.stage && S.company.industry.length >= 2;
-  document.getElementById('s1-btn').disabled = !ok;
+function prevSlide() { goSlide(S.slide - 1); }
+
+function advanceSlide() {
+  // Validate current slide before advancing
+  if (S.slide === 1 && !S.company.name) return;
+  if (S.slide === 2 && !S.company.url) return;
+  if (S.slide === 3 && !S.company.stage) return;
+  if (S.slide === 4 && S.priorities.size === 0) return;
+  goSlide(S.slide + 1);
 }
 
-/* ─────────────────────────────────────
-   STEP 2 — ENRICHMENT SIMULATION
-───────────────────────────────────── */
-function runEnrich() {
-  document.getElementById('enrich-loader').style.display = 'flex';
-  document.getElementById('enrich-result').style.display = 'none';
+function focusSlide(n) {
   setTimeout(() => {
-    document.getElementById('enrich-loader').style.display = 'none';
-    document.getElementById('enrich-result').style.display = 'block';
-    buildEnrichRows();
-  }, 2200);
+    const inp = document.querySelector('#tf-' + n + ' .input-line');
+    if (inp) inp.focus();
+  }, 100);
 }
 
-function buildEnrichRows() {
-  const { name, url, stage, industry } = S.company;
-  const fullUrl = url.startsWith('http') ? url : 'https://' + url;
-  const rows = [
-    { k:'Company',  v: name },
-    { k:'Website',  v: fullUrl },
-    { k:'Category', v: `${industry} · ${stage}` },
-    { k:'Summary',  v: `${name} is a ${stage.toLowerCase()} ${industry.toLowerCase()} company. Prodizzy will surface investors, candidates, and partners aligned with your current stage and goals.` },
-  ];
-  document.getElementById('enrich-rows').innerHTML = rows.map(r => `
-    <div class="enrich-row"><div class="enrich-key">${r.k}</div><div class="enrich-val">${r.v}</div></div>
-  `).join('');
+/* ── SLIDE 1 ── */
+function checkS1() {
+  S.company.name = document.getElementById('s1-name').value.trim();
+  document.getElementById('s1-btn').disabled = S.company.name.length < 2;
 }
 
-/* ─────────────────────────────────────
-   STEP 3 — PRIORITIES
-───────────────────────────────────── */
+/* ── SLIDE 2 ── */
+function checkS2() {
+  S.company.url = document.getElementById('s2-url').value.trim();
+  document.getElementById('s2-btn').disabled = S.company.url.length < 3;
+}
+
+/* ── SLIDE 3: Stage ── */
+function selectStage(el) {
+  document.querySelectorAll('#stage-pills .pill-opt').forEach(p => p.classList.remove('sel'));
+  el.classList.add('sel');
+  S.company.stage = el.dataset.val;
+  document.getElementById('s3-btn').disabled = false;
+  // Auto-advance after short delay for satisfying feel
+  setTimeout(() => goSlide(4), 320);
+}
+
+/* ── SLIDE 4: Priorities ── */
 const PRI = [
-  { id:'raise',   e:'💰', t:'Fundraising',  d:'Raise capital, meet investors',      ql:'Who are you looking to raise from?',  qp:'e.g. pre-seed angels, B2B SaaS investors' },
-  { id:'hire',    e:'👥', t:'Hiring',        d:'Find great people for your team',    ql:'Who are you hiring right now?',       qp:'e.g. founding engineer, growth lead' },
-  { id:'partner', e:'🤝', t:'Partnerships',  d:'Build strategic relationships',      ql:'What kind of partnerships?',          qp:'e.g. distribution, integrations, co-marketing' },
-  { id:'distro',  e:'📣', t:'Distribution',  d:'Grow reach and brand awareness',     ql:'How do you want to grow?',            qp:'e.g. creators, press, communities' },
-  { id:'cust',    e:'🎯', t:'Customers',     d:'Acquire users and early revenue',    ql:'Who is your target customer?',        qp:'e.g. B2B SaaS founders, SMBs' },
+  { id:'raise',   e:'💰', t:'Fundraising',  d:'Raise capital and meet investors',  ql:'Who are you looking to raise from?', qp:'e.g. pre-seed angels, B2B SaaS investors' },
+  { id:'hire',    e:'👥', t:'Hiring',        d:'Find great people for your team',   ql:'Who are you hiring right now?',      qp:'e.g. founding engineer, growth lead' },
+  { id:'partner', e:'🤝', t:'Partnerships',  d:'Build strategic relationships',     ql:'What kind of partnerships?',         qp:'e.g. distribution, integrations' },
+  { id:'distro',  e:'📣', t:'Distribution',  d:'Grow reach and brand awareness',    ql:'How do you want to grow?',           qp:'e.g. creators, press, communities' },
+  { id:'cust',    e:'🎯', t:'Customers',     d:'Acquire users and early revenue',   ql:'Who is your target customer?',       qp:'e.g. B2B SaaS founders, SMBs' },
 ];
 
-function buildPriGrid() {
-  document.getElementById('pri-grid').innerHTML = PRI.map((o, i) => `
-    <div class="pri-card${i===4?' wide':''}" id="pc-${o.id}" onclick="toggleP('${o.id}')">
-      <div class="pri-top">
-        <span class="pri-emoji">${o.e}</span>
-        <div class="pri-check">
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-            <path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+function buildPriCards() {
+  const wrap = document.getElementById('pri-wrap');
+  wrap.innerHTML = PRI.map(o => `
+    <div>
+      <div class="pill-opt" id="pp-${o.id}" onclick="togglePri('${o.id}')">
+        <span style="font-size:18px;line-height:1">${o.e}</span>
+        <span style="flex:1">${o.t}</span>
+        <span style="font-size:12px;color:var(--text-40);font-weight:400">${o.d}</span>
       </div>
-      <div class="pri-title">${o.t}</div>
-      <div class="pri-desc">${o.d}</div>
-      <div class="pri-expand">
-        <div class="pri-expand-label">${o.ql}</div>
-        <input type="text" class="pri-input" placeholder="${o.qp}" onclick="event.stopPropagation()">
+      <div class="pri-detail" id="pd-${o.id}">
+        <div style="padding:0 4px">
+          <div style="font-size:11px;font-weight:600;color:var(--text-40);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">${o.ql}</div>
+          <input class="pri-detail-input" type="text" placeholder="${o.qp}" onclick="event.stopPropagation()">
+        </div>
       </div>
     </div>
   `).join('');
 }
 
-function toggleP(id) {
-  const c = document.getElementById('pc-' + id);
-  S.priorities[S.priorities.has(id) ? 'delete' : 'add'](id);
-  c.classList.toggle('sel', S.priorities.has(id));
-  if (S.priorities.has(id)) {
-    setTimeout(() => { const i = c.querySelector('.pri-input'); if(i) i.focus(); }, 240);
+function togglePri(id) {
+  const pill   = document.getElementById('pp-' + id);
+  const detail = document.getElementById('pd-' + id);
+  const isSel  = S.priorities.has(id);
+
+  if (isSel) {
+    S.priorities.delete(id);
+    pill.classList.remove('sel');
+    detail.classList.remove('open');
+  } else {
+    S.priorities.add(id);
+    pill.classList.add('sel');
+    detail.classList.add('open');
+    setTimeout(() => { const inp = detail.querySelector('input'); if(inp) inp.focus(); }, 240);
   }
-  document.getElementById('s3-btn').disabled = S.priorities.size === 0;
+  document.getElementById('s4-btn').disabled = S.priorities.size === 0;
 }
 
-/* ─────────────────────────────────────
-   STEP 4 — CONNECTIONS
-───────────────────────────────────── */
-function connectService(svc) {
+/* ── SLIDE 5: Connections ── */
+function connectSvc(svc) {
   const btn  = document.getElementById('cb-' + svc);
   const card = document.getElementById('cc-' + svc);
   btn.disabled = true;
@@ -1695,12 +1214,10 @@ function connectService(svc) {
     btn.classList.add('done');
     card.classList.add('connected');
     S.connections.add(svc);
-  }, 1400);
+  }, 1300);
 }
 
-/* ─────────────────────────────────────
-   STEP 5 / DASHBOARD
-───────────────────────────────────── */
+/* ── DASHBOARD ── */
 function mkSlug(n) {
   return (n||'your-company').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').slice(0,32)||'your-company';
 }
@@ -1715,63 +1232,62 @@ function doCopy(btn) {
 function copyDashUrl() {
   const slug = mkSlug(S.company.name);
   navigator.clipboard?.writeText('prodizzy.ai/'+slug).catch(()=>{});
-  const btn = event?.currentTarget || event?.target;
-  if(btn){ const orig=btn.textContent; btn.textContent='Copied!'; setTimeout(()=>btn.textContent=orig,2000); }
 }
 
 function openDash() {
-  const name = S.company.name || 'Founder';
-  const slug = mkSlug(name);
-  const h    = new Date().getHours();
-  const g    = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const name  = S.company.name || 'Founder';
+  const slug  = mkSlug(name);
+  const h     = new Date().getHours();
+  const g     = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const days  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months= ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const now   = new Date();
 
   document.getElementById('d-greeting').textContent = g + ', ' + name;
-  const now = new Date();
-  const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('d-meta').textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()} · 5 items need your attention`;
   document.getElementById('dash-slug').textContent  = slug;
-
-  // Avatar initials
-  const init = name.trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('nav-avatar').textContent = init || 'P';
+  const init = name.trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)||'P';
+  document.getElementById('nav-avatar').textContent = init;
 
   show('dashboard-view');
 }
 
-/* ─────────────────────────────────────
-   CONFETTI
-───────────────────────────────────── */
+/* ── KEYBOARD ── */
+document.addEventListener('keydown', e => {
+  if (document.getElementById('onboarding-view').classList.contains('active')) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      // Don't fire Enter if user is typing in a priority detail input
+      if (document.activeElement?.classList.contains('pri-detail-input')) return;
+      advanceSlide();
+    }
+    if (e.key === 'Escape') prevSlide();
+  }
+});
+
+/* ── CONFETTI ── */
 function confetti() {
   const cv = document.getElementById('cfx');
   const cx = cv.getContext('2d');
   cv.width  = window.innerWidth;
   cv.height = window.innerHeight;
-
   const cols = ['#E8382A','#3D3D3D','#D97706','#16A34A','#1D4ED8','#7E22CE'];
-  const pts  = Array.from({length:88}, ()=>({
-    x: Math.random()*cv.width,
-    y: -10 - Math.random()*50,
-    vx: (Math.random()-.5)*1.8,
-    vy: 2.2 + Math.random()*3,
-    r:  2.5 + Math.random()*3.5,
-    c:  cols[Math.floor(Math.random()*cols.length)],
-    a:  Math.random()*Math.PI*2,
-    sa: (Math.random()-.5)*0.15,
-    rect: Math.random()>.45,
+  const pts  = Array.from({length:80}, ()=>({
+    x:Math.random()*cv.width, y:-10-Math.random()*50,
+    vx:(Math.random()-.5)*1.8, vy:2.2+Math.random()*3,
+    r:2.5+Math.random()*3.5,
+    c:cols[Math.floor(Math.random()*cols.length)],
+    a:Math.random()*Math.PI*2, sa:(Math.random()-.5)*.15,
+    rect:Math.random()>.45
   }));
-
   let rid;
   (function tick(){
     cx.clearRect(0,0,cv.width,cv.height);
     let any=false;
     pts.forEach(p=>{
-      p.y+=p.vy; p.x+=p.vx; p.a+=p.sa; p.vy+=0.055;
+      p.y+=p.vy; p.x+=p.vx; p.a+=p.sa; p.vy+=.055;
       if(p.y<cv.height+20) any=true;
-      cx.save();
-      cx.translate(p.x,p.y);
-      cx.rotate(p.a);
-      cx.fillStyle=p.c;
+      cx.save(); cx.translate(p.x,p.y); cx.rotate(p.a); cx.fillStyle=p.c;
       if(p.rect) cx.fillRect(-p.r,-p.r/2,p.r*2,p.r);
       else { cx.beginPath(); cx.arc(0,0,p.r,0,Math.PI*2); cx.fill(); }
       cx.restore();
@@ -1780,6 +1296,11 @@ function confetti() {
     else { cx.clearRect(0,0,cv.width,cv.height); cancelAnimationFrame(rid); }
   })();
 }
+
+/* ── SPIN KEYFRAME (for login loader) ── */
+const s = document.createElement('style');
+s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+document.head.appendChild(s);
 </script>
 </body>
 </html>
