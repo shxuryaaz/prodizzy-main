@@ -328,14 +328,23 @@
     }
 
     .login-headline {
-      font-family: var(--font-head);
-      font-size: 52px;
-      font-weight: 700;
-      line-height: 1.10;
-      letter-spacing: -1.5px;
-      color: var(--text);
+      /* Exact Framer preset-14zofr0 values from kIHidKsOe.F1bcVjlq.mjs */
+      font-family: "Geist", "Geist Placeholder", sans-serif;
+      font-size: 70px;
+      font-weight: 500;           /* medium, NOT bold — this is key */
+      line-height: 1.02em;
+      letter-spacing: -0.029em;
+      font-feature-settings: 'blwf' on, 'cv09' on, 'cv03' on, 'cv04' on, 'cv11' on;
+      text-wrap: balance;
+      /* Gradient text fill — exact Framer data-text-fill gradient */
+      background-image: linear-gradient(0deg, rgb(255, 255, 255) -71%, rgb(61, 61, 61) 46%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 18px;
     }
+    @media (max-width: 1199px) { .login-headline { font-size: 60px; } }
+    @media (max-width: 767px)  { .login-headline { font-size: 42px; } }
     .login-sub {
       font-size: 16px;
       font-weight: 500;
@@ -431,14 +440,22 @@
       margin-bottom: 20px;
     }
     .ob-headline {
-      font-family: var(--font-head);
-      font-size: 40px;
-      font-weight: 700;
-      line-height: 1.12;
-      letter-spacing: -1.2px;
-      color: var(--text);
+      /* Exact Framer heading preset */
+      font-family: "Geist", "Geist Placeholder", sans-serif;
+      font-size: 56px;
+      font-weight: 500;
+      line-height: 1.02em;
+      letter-spacing: -0.029em;
+      font-feature-settings: 'blwf' on, 'cv09' on, 'cv03' on, 'cv04' on, 'cv11' on;
+      text-wrap: balance;
+      background-image: linear-gradient(0deg, rgb(255, 255, 255) -71%, rgb(61, 61, 61) 46%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 12px;
     }
+    @media (max-width: 1199px) { .ob-headline { font-size: 46px; } }
+    @media (max-width: 767px)  { .ob-headline { font-size: 36px; } }
     .ob-sub {
       font-size: 16px;
       font-weight: 500;
@@ -792,14 +809,20 @@
       margin-bottom: 10px;
     }
     .dash-title {
-      font-family: var(--font-head);
-      font-size: 44px;
-      font-weight: 700;
-      line-height: 1.08;
-      letter-spacing: -1.2px;
-      color: var(--text);
+      font-family: "Geist", "Geist Placeholder", sans-serif;
+      font-size: 56px;
+      font-weight: 500;
+      line-height: 1.02em;
+      letter-spacing: -0.029em;
+      font-feature-settings: 'blwf' on, 'cv09' on, 'cv03' on, 'cv04' on, 'cv11' on;
+      text-wrap: balance;
+      background-image: linear-gradient(0deg, rgb(255, 255, 255) -71%, rgb(61, 61, 61) 46%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 10px;
     }
+    @media (max-width: 767px) { .dash-title { font-size: 38px; } }
     .dash-meta {
       font-size: 14px;
       font-weight: 500;
