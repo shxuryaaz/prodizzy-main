@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prodizzy — AI Chief of Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    /* ─────────────────────────────────────────
+       RESET
+    ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    button { font-family: inherit; }
+    a { text-decoration: none; }
+    input, select, textarea { font-family: inherit; }
+
+    /* ─────────────────────────────────────────
+       DESIGN TOKENS  (mirrors prodizzy1.vercel.app)
+    ───────────────────────────────────────── */
+    :root {
+      --red:        #E8382A;
+      --red-dark:   #C42E1F;
+      --dark:       #111111;
+      --text:       #1A1A1A;
+      --muted:      #6B7280;
+      --light:      #9CA3AF;
+      --border:     #E5E7EB;
+      --bg:         #F2F2F2;
+      --white:      #FFFFFF;
+      --green:      #16A34A;
+      --green-bg:   #F0FDF4;
+      --green-border:#BBF7D0;
+      --orange:     #F59E0B;
+      --blue-bg:    #EFF6FF;
+      --blue:       #1D4ED8;
+      --purple-bg:  #FAF5FF;
+      --purple:     #7E22CE;
+      --card-r:     16px;
+      --input-r:    10px;
+      --btn-r:      8px;
+      --shadow:     0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
+      --shadow-sm:  0 1px 2px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    /* ─────────────────────────────────────────
+       BASE
+    ───────────────────────────────────────── */
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ─────────────────────────────────────────
+       VIEW SYSTEM
+    ───────────────────────────────────────── */
+    .view { display: none; }
+    .view.active { display: flex; }
+
+    /* ─────────────────────────────────────────
+       SHARED: LOGO
+    ───────────────────────────────────────── */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .logo-mark {
+      width: 28px; height: 28px; flex-shrink: 0;
+      border-radius: 7px;
+      background: var(--red);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-mark svg { display: block; }
+    .logo-name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+    }
+
+    /* ─────────────────────────────────────────
+       SHARED: BUTTONS
+    ───────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 13px 20px;
+      border-radius: var(--btn-r);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background 0.14s, transform 0.1s, opacity 0.14s, border-color 0.14s;
+      letter-spacing: -0.1px;
+      white-space: nowrap;
+    }
+    .btn-full { width: 100%; }
+    .btn-red {
+      background: var(--red);
+      color: #fff;
+    }
+    .btn-red:hover:not(:disabled) { background: var(--red-dark); }
+    .btn-red:active:not(:disabled) { transform: scale(0.99); }
+    .btn-red:disabled { opacity: 0.38; cursor: not-allowed; }
+
+    .btn-outline {
+      background: var(--white);
+      color: var(--dark);
+      border: 1.5px solid var(--border);
+    }
+    .btn-outline:hover { background: #FAFAFA; border-color: #C8C8C8; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      font-weight: 500;
+      font-size: 14px;
+      padding: 10px 16px;
+    }
+    .btn-ghost:hover { color: var(--dark); }
+
+    .btn-sm { padding: 9px 16px; font-size: 13px; }
+    .btn-dark { background: var(--dark); color: #fff; }
+    .btn-dark:hover { background: #333; }
+
+    /* ─────────────────────────────────────────
+       SHARED: INPUTS
+    ───────────────────────────────────────── */
+    .input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--input-r);
+      font-size: 15px;
+      color: var(--dark);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .input::placeholder { color: var(--light); }
+    .input:focus {
+      border-color: #888;
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+    }
+    select.input {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 38px;
+    }
+
+    /* ─────────────────────────────────────────
+       CONFETTI CANVAS
+    ───────────────────────────────────────── */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ══════════════════════════════════════════
+       LOGIN VIEW
+    ══════════════════════════════════════════ */
+    #login-view {
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--bg);
+    }
+
+    .login-card {
+      background: var(--white);
+      border-radius: var(--card-r);
+      box-shadow: var(--shadow);
+      padding: 52px 44px 44px;
+      width: 100%;
+      max-width: 408px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .login-logo { margin-bottom: 36px; }
+
+    .login-headline {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.6px;
+      color: var(--dark);
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+
+    .login-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 14px 20px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--input-r);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--dark);
+      cursor: pointer;
+      transition: background 0.14s, border-color 0.14s;
+    }
+    .google-btn:hover { background: #FAFAFA; border-color: #C8C8C8; }
+    .google-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .login-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+      position: relative;
+    }
+    .login-divider::after {
+      content: 'or';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--white);
+      padding: 0 10px;
+      font-size: 12px;
+      color: var(--light);
+    }
+
+    .login-terms {
+      font-size: 12px;
+      color: var(--light);
+      margin-top: 20px;
+      line-height: 1.5;
+    }
+    .login-terms a { color: var(--muted); text-decoration: underline; }
+
+    /* ══════════════════════════════════════════
+       ONBOARDING VIEW
+    ══════════════════════════════════════════ */
+    #onboarding-view {
+      min-height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 20px 80px;
+      background: var(--bg);
+    }
+
+    /* Top bar */
+    .ob-bar {
+      width: 100%;
+      max-width: 580px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 44px;
+    }
+
+    .ob-progress {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 7px;
+    }
+    .ob-step-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .ob-bar-track {
+      width: 128px;
+      height: 3px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .ob-bar-fill {
+      height: 100%;
+      background: var(--red);
+      border-radius: 100px;
+      transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Card wrapper */
+    .ob-card {
+      width: 100%;
+      max-width: 580px;
+      background: var(--white);
+      border-radius: var(--card-r);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    /* Steps */
+    .ob-step {
+      display: none;
+      padding: 48px 52px 44px;
+      animation: stepIn 0.28s ease forwards;
+    }
+    .ob-step.active { display: block; }
+
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-headline {
+      font-size: 27px;
+      font-weight: 700;
+      letter-spacing: -0.7px;
+      color: var(--dark);
+      line-height: 1.22;
+      margin-bottom: 9px;
+    }
+    .step-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 36px;
+    }
+
+    /* Field layouts */
+    .fields { display: flex; flex-direction: column; gap: 18px; margin-bottom: 32px; }
+    .field  { display: flex; flex-direction: column; gap: 6px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field-label { font-size: 13px; font-weight: 500; color: var(--text); }
+    .microcopy { font-size: 12px; color: var(--light); margin-bottom: 24px; }
+
+    /* Spacer between primary and ghost btn */
+    .btn-stack { display: flex; flex-direction: column; gap: 4px; }
+
+    /* ── Step 2: Enrichment ── */
+    .enrich-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 52px 0 44px;
+      gap: 18px;
+    }
+    .spinner {
+      width: 34px; height: 34px;
+      border: 2.5px solid var(--border);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .enrich-loading-text { font-size: 15px; font-weight: 500; color: var(--muted); }
+    .enrich-loading-sub  { font-size: 13px; color: var(--light); }
+
+    .enrich-result { display: none; }
+
+    .found-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px;
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #14532D;
+      margin-bottom: 28px;
+    }
+
+    .enrich-rows { display: flex; flex-direction: column; gap: 0; margin-bottom: 32px; }
+    .enrich-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .enrich-row:first-child { padding-top: 0; }
+    .enrich-row:last-child  { border-bottom: none; padding-bottom: 0; }
+    .enrich-key {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .enrich-val {
+      font-size: 14px;
+      color: var(--dark);
+      line-height: 1.55;
+    }
+
+    /* ── Step 3: Priorities ── */
+    .pri-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+      margin-bottom: 28px;
+    }
+    .pri-card {
+      padding: 18px 18px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color 0.16s, background 0.16s;
+      background: var(--white);
+      user-select: none;
+    }
+    .pri-card:hover         { border-color: #C0C0C0; background: #FAFAFA; }
+    .pri-card.sel           { border-color: var(--red); background: #FFF8F7; }
+    .pri-card.full          { grid-column: 1 / -1; }
+
+    .pri-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .pri-emoji { font-size: 22px; line-height: 1; }
+    .pri-check {
+      width: 19px; height: 19px;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.14s, border-color 0.14s;
+    }
+    .pri-card.sel .pri-check { background: var(--red); border-color: var(--red); }
+    .pri-check-mark { display: none; }
+    .pri-card.sel .pri-check-mark { display: block; }
+
+    .pri-title { font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 3px; }
+    .pri-desc  { font-size: 12px; color: var(--muted); line-height: 1.45; }
+
+    .pri-expand {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.24s ease, opacity 0.2s ease, margin-top 0.2s ease;
+    }
+    .pri-card.sel .pri-expand { max-height: 90px; opacity: 1; margin-top: 14px; }
+    .pri-expand-label { font-size: 11px; font-weight: 500; color: var(--muted); margin-bottom: 7px; }
+    .pri-expand-input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 13px;
+      color: var(--dark);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.14s;
+    }
+    .pri-expand-input:focus { border-color: var(--red); }
+    .pri-expand-input::placeholder { color: var(--light); }
+
+    /* ── Step 4: Connections ── */
+    .conn-list { display: flex; flex-direction: column; gap: 11px; margin-bottom: 24px; }
+    .conn-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--white);
+      transition: border-color 0.15s;
+    }
+    .conn-card.connected { border-color: var(--green-border); background: var(--green-bg); }
+    .conn-left { display: flex; align-items: center; gap: 14px; }
+    .conn-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .conn-name { font-size: 14px; font-weight: 600; color: var(--dark); }
+    .conn-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .conn-btn {
+      padding: 8px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      background: var(--white);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--dark);
+      cursor: pointer;
+      transition: all 0.14s;
+      flex-shrink: 0;
+    }
+    .conn-btn:hover { border-color: #AAA; background: #FAFAFA; }
+    .conn-btn.connected { background: var(--green-bg); border-color: var(--green-border); color: var(--green); cursor: default; }
+    .badge-soon {
+      padding: 4px 12px;
+      background: #F3F4F6;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .skip-text {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 8px;
+      transition: color 0.14s;
+    }
+    .skip-text:hover { color: var(--dark); }
+
+    /* ── Step 5: Success ── */
+    .success-wrap { text-align: center; }
+    .success-icon-wrap {
+      width: 68px; height: 68px;
+      background: #FFF1F0;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 28px;
+      font-size: 30px;
+    }
+    .success-url-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      margin: 28px 0 16px;
+      text-align: left;
+    }
+    .success-url-text { font-size: 14px; font-weight: 600; color: var(--dark); flex: 1; }
+    .success-url-text span { color: var(--red); }
+    .copy-btn {
+      padding: 7px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.14s;
+      flex-shrink: 0;
+    }
+    .copy-btn:hover { color: var(--dark); border-color: #AAA; }
+    .inbound-preview {
+      padding: 16px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+    .inbound-preview-label {
+      font-size: 11px; font-weight: 600; color: var(--light);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .inbound-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .inbound-pill {
+      padding: 6px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 100px;
+      font-size: 13px; font-weight: 500;
+      color: var(--text);
+      background: var(--white);
+    }
+
+    /* ══════════════════════════════════════════
+       DASHBOARD VIEW
+    ══════════════════════════════════════════ */
+    #dashboard-view {
+      min-height: 100vh;
+      background: var(--bg);
+      align-items: flex-start;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 228px;
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 0 24px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sb-logo { padding: 0 20px; margin-bottom: 36px; }
+
+    .sb-nav { display: flex; flex-direction: column; gap: 2px; padding: 0 12px; flex: 1; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 14px; font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.14s, color 0.14s;
+    }
+    .nav-item:hover  { background: var(--bg); color: var(--dark); }
+    .nav-item.active { background: var(--bg); color: var(--dark); }
+    .nav-item svg { flex-shrink: 0; opacity: 0.7; }
+    .nav-item.active svg { opacity: 1; }
+
+    /* Checklist */
+    .sb-section {
+      margin-top: auto;
+      padding: 20px 20px 0;
+      border-top: 1px solid var(--border);
+    }
+    .sb-section-label {
+      font-size: 11px; font-weight: 600;
+      color: var(--light);
+      text-transform: uppercase; letter-spacing: 0.6px;
+      margin-bottom: 14px;
+    }
+    .check-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 0;
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.14s;
+    }
+    .check-item.done { color: var(--muted); }
+    .check-item.todo { color: var(--dark); font-weight: 500; }
+    .check-circle {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .check-circle.done { background: #DCFCE7; }
+    .check-circle.todo { border: 1.5px solid var(--border); }
+
+    /* ── Dashboard Main ── */
+    .dash-main {
+      flex: 1;
+      padding: 44px 52px 80px;
+      min-width: 0;
+      overflow-y: auto;
+      max-width: 880px;
+    }
+
+    .dash-header { margin-bottom: 40px; }
+    .dash-greeting { font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
+    .dash-title {
+      font-size: 30px; font-weight: 700;
+      color: var(--dark); letter-spacing: -0.8px;
+      line-height: 1.15;
+    }
+    .dash-meta { font-size: 13px; color: var(--light); margin-top: 5px; }
+
+    /* Section row */
+    .section-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px; margin-top: 36px;
+    }
+    .section-row:first-of-type { margin-top: 0; }
+    .section-title {
+      font-size: 12px; font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .section-pill {
+      padding: 2px 9px;
+      background: var(--bg);
+      border-radius: 100px;
+      font-size: 11px; font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* Priority card */
+    .p-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .p-card {
+      display: flex;
+      gap: 0;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .p-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.09); transform: translateY(-1px); }
+
+    .p-accent { width: 4px; flex-shrink: 0; }
+    .p-accent.high   { background: var(--red);    }
+    .p-accent.medium { background: var(--orange);  }
+    .p-accent.low    { background: var(--border); }
+
+    .p-body { flex: 1; padding: 20px 24px; min-width: 0; }
+
+    .p-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 12px;
+      margin-bottom: 9px;
+    }
+
+    .p-name { font-size: 15px; font-weight: 600; color: var(--dark); letter-spacing: -0.2px; }
+    .p-org  { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 5px; }
+
+    /* Category badge */
+    .p-cat {
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px; font-weight: 600;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .p-cat.investor   { background: var(--blue-bg); color: var(--blue); }
+    .p-cat.candidate  { background: var(--green-bg); color: var(--green); }
+    .p-cat.partner    { background: var(--purple-bg); color: var(--purple); }
+    .p-cat.creator    { background: #FFF7ED; color: #C2410C; }
+
+    .p-why {
+      font-size: 13px; color: var(--muted); line-height: 1.55;
+      margin-bottom: 16px;
+    }
+    .p-why strong { color: var(--text); font-weight: 500; }
+
+    .p-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+    .p-action {
+      padding: 8px 16px;
+      background: var(--dark);
+      color: var(--white);
+      border: none; border-radius: 7px;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer;
+      transition: background 0.14s;
+    }
+    .p-action:hover { background: #2A2A2A; }
+
+    .p-prio {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 500; color: var(--muted);
+    }
+    .p-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+    .p-dot.high   { background: var(--red); }
+    .p-dot.medium { background: var(--orange); }
+    .p-dot.low    { background: var(--border); }
+
+    /* ── Empty / Invite state ── */
+    .invite-card {
+      background: var(--white);
+      border: 1.5px dashed var(--border);
+      border-radius: 12px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .invite-icon { font-size: 28px; }
+    .invite-title { font-size: 15px; font-weight: 600; color: var(--dark); }
+    .invite-sub   { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ── Top banner (share nudge) ── */
+    .dash-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--dark);
+      border-radius: 10px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+    .banner-text { font-size: 13px; color: rgba(255,255,255,0.75); }
+    .banner-text strong { color: #fff; font-weight: 600; }
+    .banner-btn {
+      padding: 8px 18px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: background 0.14s;
+      flex-shrink: 0;
+    }
+    .banner-btn:hover { background: var(--red-dark); }
+    .banner-close {
+      background: none; border: none;
+      color: rgba(255,255,255,0.4);
+      cursor: pointer; font-size: 18px; line-height: 1;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .banner-close:hover { color: rgba(255,255,255,0.8); }
+
+    /* ─────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────── */
+    @media (max-width: 860px) {
+      .sidebar { display: none; }
+      .dash-main { padding: 28px 20px 60px; }
+    }
+    @media (max-width: 600px) {
+      .ob-step { padding: 32px 24px 28px; }
+      .field-row { grid-template-columns: 1fr; }
+      .pri-grid  { grid-template-columns: 1fr; }
+      .pri-card.full { grid-column: auto; }
+      .login-card { padding: 36px 24px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Confetti ── -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ══════════════════════════════════════════
+     LOGIN
+══════════════════════════════════════════ -->
+<div id="login-view" class="view active">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo">
+        <div class="logo-mark">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2.5 7L6 10.5L11.5 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="logo-name">Prodizzy</span>
+      </div>
+    </div>
+
+    <h1 class="login-headline">Welcome to Prodizzy</h1>
+    <p class="login-sub">Your AI Chief of Staff is ready.<br>Sign in to set up your company.</p>
+
+    <button class="google-btn" id="google-btn" onclick="handleGoogleLogin()">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+        <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/>
+        <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
+    </button>
+
+    <div class="login-divider"></div>
+
+    <button class="btn btn-outline btn-full" onclick="handleGoogleLogin()" style="font-size:14px;font-weight:500;">
+      Sign in with email
+    </button>
+
+    <p class="login-terms">By signing in you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.<br>No credit card required.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ONBOARDING
+══════════════════════════════════════════ -->
+<div id="onboarding-view" class="view">
+
+  <!-- Top bar -->
+  <div class="ob-bar">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2.5 7L6 10.5L11.5 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="logo-name">Prodizzy</span>
+    </div>
+    <div class="ob-progress">
+      <span class="ob-step-label" id="ob-label">Step 1 of 5</span>
+      <div class="ob-bar-track">
+        <div class="ob-bar-fill" id="ob-fill" style="width:20%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ob-card">
+
+    <!-- ── STEP 1: Company Basics ── -->
+    <div class="ob-step active" id="step-1">
+      <h2 class="step-headline">Tell us about<br>your company</h2>
+      <p class="step-sub">We'll personalize Prodizzy around your priorities.</p>
+
+      <div class="fields">
+        <div class="field">
+          <label class="field-label" for="f-name">Company name</label>
+          <input id="f-name" class="input" type="text" placeholder="Acme Inc."
+                 autocomplete="organization" autofocus oninput="checkStep1()">
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-url">Website URL</label>
+          <input id="f-url" class="input" type="text" placeholder="acme.com" oninput="checkStep1()">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="f-stage">Stage</label>
+            <select id="f-stage" class="input" onchange="checkStep1()">
+              <option value="">Select stage</option>
+              <option>Idea</option>
+              <option>Pre-seed</option>
+              <option>Seed</option>
+              <option>Series A</option>
+              <option>Growth</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label" for="f-industry">Industry</label>
+            <input id="f-industry" class="input" type="text" placeholder="e.g. SaaS, FinTech" oninput="checkStep1()">
+          </div>
+        </div>
+      </div>
+
+      <p class="microcopy">You can edit this later in settings.</p>
+
+      <button class="btn btn-red btn-full" id="s1-btn" onclick="goStep(2)" disabled>
+        Continue
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <!-- ── STEP 2: Company Context ── -->
+    <div class="ob-step" id="step-2">
+
+      <!-- Loading state -->
+      <div class="enrich-loading" id="enrich-loading">
+        <div class="spinner"></div>
+        <div class="enrich-loading-text">Understanding your company…</div>
+        <div class="enrich-loading-sub">Scanning your website and building context</div>
+      </div>
+
+      <!-- Result state -->
+      <div class="enrich-result" id="enrich-result">
+        <h2 class="step-headline">We found your company</h2>
+        <p class="step-sub">Review and edit anything that looks off.</p>
+
+        <div class="found-badge">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path d="M2 6.5l3 3 6-6" stroke="#14532D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Company context found
+        </div>
+
+        <div class="enrich-rows" id="enrich-rows"></div>
+
+        <div class="btn-stack">
+          <button class="btn btn-red btn-full" onclick="goStep(3)">
+            Looks good →
+          </button>
+          <button class="btn btn-ghost btn-full" onclick="goStep(1)">Edit details</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Priorities ── -->
+    <div class="ob-step" id="step-3">
+      <h2 class="step-headline">What matters most<br>right now?</h2>
+      <p class="step-sub">We'll prioritize the right people for your goals. Pick all that apply.</p>
+
+      <div class="pri-grid" id="pri-grid"></div>
+
+      <button class="btn btn-red btn-full" id="s3-btn" onclick="goStep(4)" disabled>
+        Continue
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <!-- ── STEP 4: Connections ── -->
+    <div class="ob-step" id="step-4">
+      <h2 class="step-headline">Connect your workflows</h2>
+      <p class="step-sub">Optional — but helps Prodizzy surface more. You can always add these later.</p>
+
+      <div class="conn-list">
+
+        <div class="conn-card" id="conn-gmail">
+          <div class="conn-left">
+            <div class="conn-icon" style="background:#FEF2F2">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M2 5h18v13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z" stroke="#E8382A" stroke-width="1.5"/><path d="M2 5l9 8 9-8" stroke="#E8382A" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div class="conn-name">Gmail</div>
+              <div class="conn-desc">Surface important conversations</div>
+            </div>
+          </div>
+          <button class="conn-btn" id="btn-gmail" onclick="connectIt('gmail')">Connect</button>
+        </div>
+
+        <div class="conn-card" id="conn-calendly">
+          <div class="conn-left">
+            <div class="conn-icon" style="background:#F0FDF4">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="4" width="16" height="16" rx="2" stroke="#16A34A" stroke-width="1.5"/><path d="M3 9h16M8 2v4M14 2v4" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div class="conn-name">Calendly</div>
+              <div class="conn-desc">Sync meetings and scheduling</div>
+            </div>
+          </div>
+          <button class="conn-btn" id="btn-calendly" onclick="connectIt('calendly')">Connect</button>
+        </div>
+
+        <div class="conn-card" id="conn-gcal">
+          <div class="conn-left">
+            <div class="conn-icon" style="background:#EFF6FF">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="4" width="16" height="16" rx="2" stroke="#1D4ED8" stroke-width="1.5"/><path d="M3 9h16M8 2v4M14 2v4" stroke="#1D4ED8" stroke-width="1.5" stroke-linecap="round"/><text x="7" y="18" font-size="7" fill="#1D4ED8" font-family="sans-serif" font-weight="600">G</text></svg>
+            </div>
+            <div>
+              <div class="conn-name">Google Calendar</div>
+              <div class="conn-desc">Meeting context and history</div>
+            </div>
+          </div>
+          <button class="conn-btn" id="btn-gcal" onclick="connectIt('gcal')">Connect</button>
+        </div>
+
+        <div class="conn-card" id="conn-linkedin">
+          <div class="conn-left">
+            <div class="conn-icon" style="background:#EFF6FF">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="18" height="18" rx="3" stroke="#1D4ED8" stroke-width="1.5"/><path d="M6 9v7M6 6v.5" stroke="#1D4ED8" stroke-width="1.8" stroke-linecap="round"/><path d="M10 16v-4c0-1.1.9-2 2-2s2 .9 2 2v4" stroke="#1D4ED8" stroke-width="1.5" stroke-linecap="round"/><path d="M10 9v7" stroke="#1D4ED8" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div class="conn-name">LinkedIn</div>
+              <div class="conn-desc">Relationship context and signals</div>
+            </div>
+          </div>
+          <span class="badge-soon">Coming soon</span>
+        </div>
+
+      </div>
+
+      <button class="btn btn-red btn-full" onclick="goStep(5)">
+        Continue
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="skip-text" onclick="goStep(5)">Skip for now</span>
+    </div>
+
+    <!-- ── STEP 5: Ready ── -->
+    <div class="ob-step" id="step-5">
+      <div class="success-wrap">
+        <div class="success-icon-wrap">🎯</div>
+        <h2 class="step-headline">Your Prodizzy page<br>is ready</h2>
+        <p class="step-sub">Share this link instead of scattered DMs and emails.<br>People submit structured details — Prodizzy ranks them for you.</p>
+      </div>
+
+      <div class="success-url-row">
+        <div class="success-url-text">prodizzy.ai/<span id="co-slug">your-company</span></div>
+        <button class="copy-btn" onclick="doCopy(this)">Copy</button>
+      </div>
+
+      <div class="inbound-preview">
+        <div class="inbound-preview-label">People can reach you as</div>
+        <div class="inbound-pills">
+          <span class="inbound-pill">Investor</span>
+          <span class="inbound-pill">Candidate</span>
+          <span class="inbound-pill">Partner</span>
+          <span class="inbound-pill">Creator</span>
+          <span class="inbound-pill">Other</span>
+        </div>
+      </div>
+
+      <button class="btn btn-red btn-full" onclick="openDashboard()">
+        Open Dashboard
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+  </div><!-- /ob-card -->
+</div><!-- /onboarding-view -->
+
+
+<!-- ══════════════════════════════════════════
+     DASHBOARD
+══════════════════════════════════════════ -->
+<div id="dashboard-view" class="view">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="logo">
+        <div class="logo-mark">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2.5 7L6 10.5L11.5 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="logo-name">Prodizzy</span>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="nav-item active">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5.5V8l1.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        My Priorities
+      </div>
+      <div class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4.5h12M2 8h12M2 11.5h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Inbound
+        <span style="margin-left:auto;background:#FEF2F2;color:var(--red);padding:1px 7px;border-radius:100px;font-size:11px;font-weight:600;">3</span>
+      </div>
+      <div class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 7A3 3 0 1 0 8 1a3 3 0 0 0 0 6zM2 15a6 6 0 0 1 12 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Contacts
+      </div>
+      <div class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+        Integrations
+      </div>
+      <div class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Settings
+      </div>
+    </nav>
+
+    <!-- Setup checklist -->
+    <div class="sb-section">
+      <div class="sb-section-label">Setup</div>
+      <div class="check-item done">
+        <div class="check-circle done">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        Company setup
+      </div>
+      <div class="check-item done">
+        <div class="check-circle done">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        Set priorities
+      </div>
+      <div class="check-item todo">
+        <div class="check-circle todo"></div>
+        Share Prodizzy page
+      </div>
+      <div class="check-item todo">
+        <div class="check-circle todo"></div>
+        Connect Gmail
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="dash-main">
+
+    <!-- Share nudge banner -->
+    <div class="dash-banner" id="dash-banner">
+      <div class="banner-text">
+        <strong>Share your Prodizzy page</strong> — let investors, candidates, and partners reach you in one place.
+      </div>
+      <button class="banner-btn" onclick="doCopyDash()">Copy link</button>
+      <button class="banner-close" onclick="document.getElementById('dash-banner').style.display='none'">×</button>
+    </div>
+
+    <!-- Header -->
+    <div class="dash-header">
+      <div class="dash-greeting" id="dash-greeting">Good morning 👋</div>
+      <h1 class="dash-title" id="dash-company-name">Today's Priorities</h1>
+      <div class="dash-meta" id="dash-meta">Monday, June 2 · 5 items need your attention</div>
+    </div>
+
+    <!-- High priority -->
+    <div class="section-row">
+      <span class="section-title">High priority</span>
+      <span class="section-pill">2</span>
+    </div>
+
+    <div class="p-list">
+
+      <div class="p-card">
+        <div class="p-accent high"></div>
+        <div class="p-body">
+          <div class="p-top">
+            <div><span class="p-name">Sarah Chen</span><span class="p-org">· Sequoia Capital</span></div>
+            <span class="p-cat investor">Investor</span>
+          </div>
+          <p class="p-why"><strong>Warm intro through David Tisch</strong> · Aligned with your Series A goal. She's actively investing in B2B SaaS. No reply in 5 days — window closing.</p>
+          <div class="p-footer">
+            <button class="p-action">Schedule meeting →</button>
+            <div class="p-prio"><span class="p-dot high"></span>High priority</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-card">
+        <div class="p-accent high"></div>
+        <div class="p-body">
+          <div class="p-top">
+            <div><span class="p-name">Marcus Rivera</span><span class="p-org">· Senior Engineer</span></div>
+            <span class="p-cat candidate">Candidate</span>
+          </div>
+          <p class="p-why"><strong>Referred by your CTO</strong> · Full-stack, 6 years exp. Currently interviewing elsewhere — open to offers for 2 more weeks.</p>
+          <div class="p-footer">
+            <button class="p-action">Send intro email →</button>
+            <div class="p-prio"><span class="p-dot high"></span>High priority</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Medium priority -->
+    <div class="section-row">
+      <span class="section-title">Medium priority</span>
+      <span class="section-pill">2</span>
+    </div>
+
+    <div class="p-list">
+
+      <div class="p-card">
+        <div class="p-accent medium"></div>
+        <div class="p-body">
+          <div class="p-top">
+            <div><span class="p-name">Partnership Request</span><span class="p-org">· Notion</span></div>
+            <span class="p-cat partner">Partnership</span>
+          </div>
+          <p class="p-why"><strong>Potential integration partner</strong> · 2M+ user overlap with your ICP. Submitted via your Prodizzy page 2 days ago. No action yet.</p>
+          <div class="p-footer">
+            <button class="p-action">Review request →</button>
+            <div class="p-prio"><span class="p-dot medium"></span>Medium priority</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-card">
+        <div class="p-accent medium"></div>
+        <div class="p-body">
+          <div class="p-top">
+            <div><span class="p-name">James Willard</span><span class="p-org">· Angel Investor</span></div>
+            <span class="p-cat investor">Investor</span>
+          </div>
+          <p class="p-why"><strong>Met at YC Demo Day last week</strong> · Expressed interest in your space. $50K–$250K checks. No follow-up sent — 8 days since meeting.</p>
+          <div class="p-footer">
+            <button class="p-action">Follow up now →</button>
+            <div class="p-prio"><span class="p-dot medium"></span>Medium priority</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- New this week -->
+    <div class="section-row">
+      <span class="section-title">New this week</span>
+      <span class="section-pill">1</span>
+    </div>
+
+    <div class="p-list">
+
+      <div class="p-card">
+        <div class="p-accent low"></div>
+        <div class="p-body">
+          <div class="p-top">
+            <div><span class="p-name">Product Feature DM</span><span class="p-org">· Creator</span></div>
+            <span class="p-cat creator">Distribution</span>
+          </div>
+          <p class="p-why"><strong>High-traffic creator, 50K followers</strong> · Wants to feature you in their weekly product roundup. Easy distribution win if you reply today.</p>
+          <div class="p-footer">
+            <button class="p-action">Respond to DM →</button>
+            <div class="p-prio"><span class="p-dot low"></span>New</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Invite card -->
+    <div class="invite-card">
+      <div class="invite-icon">📬</div>
+      <div class="invite-title">More opportunities are coming</div>
+      <div class="invite-sub">Share your Prodizzy page so investors, hires, and partners<br>can reach you in a structured way.</div>
+      <button class="btn btn-outline btn-sm" style="margin-top:4px" onclick="doCopyDash()">Copy prodizzy.ai/<span id="invite-slug">your-company</span></button>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+const S = {
+  step: 0,
+  company: { name: '', url: '', stage: '', industry: '' },
+  priorities: new Set(),
+  connections: new Set()
+};
+
+// ─────────────────────────────────────────
+// VIEW SWITCHER
+// ─────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────────────────
+// LOGIN
+// ─────────────────────────────────────────
+function handleGoogleLogin() {
+  const btn = document.getElementById('google-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div style="width:16px;height:16px;border:2px solid #ddd;border-top-color:#555;border-radius:50%;animation:spin .7s linear infinite"></div> Signing in…';
+  setTimeout(() => {
+    show('onboarding-view');
+    goStep(1);
+  }, 1100);
+}
+
+// ─────────────────────────────────────────
+// ONBOARDING STEP MACHINE
+// ─────────────────────────────────────────
+function goStep(n) {
+  document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('step-' + n);
+  if (!el) return;
+  el.classList.add('active');
+  S.step = n;
+
+  document.getElementById('ob-label').textContent = `Step ${n} of 5`;
+  document.getElementById('ob-fill').style.width = `${(n / 5) * 100}%`;
+
+  if (n === 2) runEnrichment();
+  if (n === 3) buildPriCards();
+  if (n === 5) {
+    const slug = makeSlug(S.company.name);
+    document.getElementById('co-slug').textContent = slug;
+    setTimeout(fireConfetti, 400);
+  }
+}
+
+// ─────────────────────────────────────────
+// STEP 1 VALIDATION
+// ─────────────────────────────────────────
+function checkStep1() {
+  S.company.name     = document.getElementById('f-name').value.trim();
+  S.company.url      = document.getElementById('f-url').value.trim();
+  S.company.stage    = document.getElementById('f-stage').value;
+  S.company.industry = document.getElementById('f-industry').value.trim();
+
+  const ok = S.company.name.length >= 2
+          && S.company.url.length >= 3
+          && S.company.stage !== ''
+          && S.company.industry.length >= 2;
+
+  document.getElementById('s1-btn').disabled = !ok;
+}
+
+// ─────────────────────────────────────────
+// STEP 2 ENRICHMENT SIMULATION
+// ─────────────────────────────────────────
+function runEnrichment() {
+  document.getElementById('enrich-loading').style.display = 'flex';
+  document.getElementById('enrich-result').style.display  = 'none';
+
+  setTimeout(() => {
+    document.getElementById('enrich-loading').style.display = 'none';
+    document.getElementById('enrich-result').style.display  = 'block';
+    renderEnrichRows();
+  }, 2200);
+}
+
+function renderEnrichRows() {
+  const { name, url, stage, industry } = S.company;
+  const fullUrl = url.startsWith('http') ? url : 'https://' + url;
+  const rows = [
+    { key: 'Company',  val: name },
+    { key: 'Website',  val: fullUrl },
+    { key: 'Category', val: `${industry} · ${stage}` },
+    { key: 'Summary',  val: `${name} is a ${stage.toLowerCase()} ${industry.toLowerCase()} company. Based on your site, Prodizzy will surface investors, candidates, and partners aligned with your current goals.` },
+  ];
+
+  document.getElementById('enrich-rows').innerHTML = rows.map(r => `
+    <div class="enrich-row">
+      <div class="enrich-key">${r.key}</div>
+      <div class="enrich-val">${r.val}</div>
+    </div>
+  `).join('');
+}
+
+// ─────────────────────────────────────────
+// STEP 3 PRIORITY CARDS
+// ─────────────────────────────────────────
+const PRI_OPTIONS = [
+  { id: 'fundraising',  emoji: '💰', title: 'Fundraising',  desc: 'Raise capital and meet investors',       qLabel: 'Who are you looking to raise from?', qPh: 'e.g. pre-seed angels, B2B SaaS investors' },
+  { id: 'hiring',       emoji: '👥', title: 'Hiring',        desc: 'Find great people for your team',        qLabel: 'Who are you hiring?',                qPh: 'e.g. founding engineer, growth lead' },
+  { id: 'partnerships', emoji: '🤝', title: 'Partnerships',  desc: 'Build strategic relationships',           qLabel: 'What kind of partnerships?',         qPh: 'e.g. distribution, integrations' },
+  { id: 'distribution', emoji: '📣', title: 'Distribution',  desc: 'Grow reach and awareness',               qLabel: 'How do you want to grow?',           qPh: 'e.g. creators, press, communities' },
+  { id: 'customers',    emoji: '🎯', title: 'Customers',     desc: 'Acquire users and early revenue',        qLabel: 'Who is your target customer?',       qPh: 'e.g. B2B SaaS founders, SMBs' },
+];
+
+function buildPriCards() {
+  const grid = document.getElementById('pri-grid');
+  grid.innerHTML = PRI_OPTIONS.map((o, i) => `
+    <div class="pri-card${i === 4 ? ' full' : ''}" id="pc-${o.id}" onclick="togglePri('${o.id}')">
+      <div class="pri-card-top">
+        <span class="pri-emoji">${o.emoji}</span>
+        <div class="pri-check">
+          <svg class="pri-check-mark" width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="pri-title">${o.title}</div>
+      <div class="pri-desc">${o.desc}</div>
+      <div class="pri-expand">
+        <div class="pri-expand-label">${o.qLabel}</div>
+        <input type="text" class="pri-expand-input" placeholder="${o.qPh}" onclick="event.stopPropagation()">
+      </div>
+    </div>
+  `).join('');
+}
+
+function togglePri(id) {
+  const card = document.getElementById('pc-' + id);
+  if (S.priorities.has(id)) {
+    S.priorities.delete(id);
+    card.classList.remove('sel');
+  } else {
+    S.priorities.add(id);
+    card.classList.add('sel');
+    setTimeout(() => {
+      const inp = card.querySelector('.pri-expand-input');
+      if (inp) inp.focus();
+    }, 240);
+  }
+  document.getElementById('s3-btn').disabled = S.priorities.size === 0;
+}
+
+// ─────────────────────────────────────────
+// STEP 4 CONNECTIONS
+// ─────────────────────────────────────────
+function connectIt(service) {
+  const btn = document.getElementById('btn-' + service);
+  const card = document.getElementById('conn-' + service);
+  btn.disabled = true;
+  btn.textContent = 'Connecting…';
+  setTimeout(() => {
+    btn.textContent = '✓ Connected';
+    btn.classList.add('connected');
+    card.classList.add('connected');
+    S.connections.add(service);
+  }, 1400);
+}
+
+// ─────────────────────────────────────────
+// STEP 5 / DASHBOARD
+// ─────────────────────────────────────────
+function makeSlug(name) {
+  return (name || 'your-company')
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .slice(0, 32) || 'your-company';
+}
+
+function doCopy(btn) {
+  const slug = document.getElementById('co-slug').textContent;
+  navigator.clipboard?.writeText('prodizzy.ai/' + slug).catch(() => {});
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy', 2000);
+}
+
+function doCopyDash() {
+  const slug = makeSlug(S.company.name);
+  navigator.clipboard?.writeText('prodizzy.ai/' + slug).catch(() => {});
+  alert('Link copied! prodizzy.ai/' + slug);
+}
+
+function openDashboard() {
+  // Personalize
+  const name = S.company.name || 'Founder';
+  const slug = makeSlug(name);
+  const h    = new Date().getHours();
+  const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+
+  document.getElementById('dash-greeting').textContent    = `${greet}, ${name} 👋`;
+  document.getElementById('dash-company-name').textContent = `Today's Priorities`;
+
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const now  = new Date();
+  document.getElementById('dash-meta').textContent =
+    `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()} · 5 items need your attention`;
+
+  document.getElementById('invite-slug').textContent = slug;
+
+  show('dashboard-view');
+}
+
+// ─────────────────────────────────────────
+// CONFETTI
+// ─────────────────────────────────────────
+function fireConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const palette = ['#E8382A','#1A1A1A','#F59E0B','#16A34A','#3B82F6','#8B5CF6','#EC4899'];
+
+  const particles = Array.from({ length: 90 }, () => ({
+    x:    Math.random() * canvas.width,
+    y:    -16 - Math.random() * 60,
+    vx:   (Math.random() - 0.5) * 2,
+    vy:   2.5 + Math.random() * 3.5,
+    r:    3 + Math.random() * 4,
+    color: palette[Math.floor(Math.random() * palette.length)],
+    angle: Math.random() * Math.PI * 2,
+    spin:  (Math.random() - 0.5) * 0.18,
+    shape: Math.random() > 0.5 ? 'rect' : 'circle',
+  }));
+
+  let id;
+  function tick() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+
+    for (const p of particles) {
+      p.y     += p.vy;
+      p.x     += p.vx;
+      p.angle += p.spin;
+      p.vy    += 0.06; // gravity
+
+      if (p.y < canvas.height + 20) alive = true;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      ctx.fillStyle = p.color;
+      if (p.shape === 'rect') {
+        ctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r);
+      } else {
+        ctx.beginPath();
+        ctx.arc(0, 0, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    if (alive) { id = requestAnimationFrame(tick); }
+    else        { ctx.clearRect(0, 0, canvas.width, canvas.height); cancelAnimationFrame(id); }
+  }
+  tick();
+}
+</script>
+</body>
+</html>
