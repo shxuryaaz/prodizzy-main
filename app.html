@@ -5,18 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prodizzy — AI Chief of Staff</title>
 
-  <!-- Exact font files from the Framer site (same CDN URLs, same weights) -->
+  <!-- Self-hosted fonts — exact same files as the Framer site, no CORS issues -->
   <style>
-    /* Geist — exact URLs from fonts.gstatic.com/s/geist/v3/ as used in the Framer site */
-    @font-face { font-family: "Geist"; src: url("https://fonts.gstatic.com/s/geist/v3/gyBhhwUxId8gMGYQMKR3pzfaWI_RruM4mJPby1QNtA.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 500 }
-    @font-face { font-family: "Geist"; src: url("https://fonts.gstatic.com/s/geist/v3/gyBhhwUxId8gMGYQMKR3pzfaWI_Re-Q4mJPby1QNtA.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 700 }
-
-    /* Inter — exact URLs from framerusercontent.com/assets/ as used in the Framer site */
-    @font-face { font-family: "Inter"; src: url("https://framerusercontent.com/assets/GrgcKwrN6d3Uz8EwcLHZxwEfC4.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 400; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2070, U+2074-207E, U+2080-208E, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD }
-    @font-face { font-family: "Inter"; src: url("https://framerusercontent.com/assets/vQyevYAyHtARFwPqUzQGpnDs.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 400; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD }
-    @font-face { font-family: "Inter"; src: url("https://framerusercontent.com/assets/d3tHnaQIAeqiE5hGcRw4mmgWYU.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 500; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD }
-    @font-face { font-family: "Inter"; src: url("https://framerusercontent.com/assets/1ZFS7N918ojhhd0nQWdj3jz4w.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 600; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD }
-    @font-face { font-family: "Inter"; src: url("https://framerusercontent.com/assets/DXD0Q7LSl7HEvDzucnyLnGBHM.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD }
+    @font-face { font-family: "Geist"; src: url("fonts/geist-500.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 500 }
+    @font-face { font-family: "Geist"; src: url("fonts/geist-700.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 700 }
+    @font-face { font-family: "Inter"; src: url("fonts/inter-400.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 400 }
+    @font-face { font-family: "Inter"; src: url("fonts/inter-500.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 500 }
+    @font-face { font-family: "Inter"; src: url("fonts/inter-600.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 600 }
+    @font-face { font-family: "Inter"; src: url("fonts/inter-700.woff2") format("woff2"); font-display: swap; font-style: normal; font-weight: 700 }
   </style>
 
   <style>
