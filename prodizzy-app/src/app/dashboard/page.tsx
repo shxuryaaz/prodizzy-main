@@ -44,8 +44,8 @@ export default function DashboardPage() {
   const [copyLabel, setCopyLabel] = useState('Copy link')
 
   useEffect(() => {
-    const slug = localStorage.getItem('prodizzy_slug')
-    const coName = localStorage.getItem('prodizzy_company')
+    const slug = localStorage.getItem('prodizzy_slug') ?? ''
+    const coName = localStorage.getItem('prodizzy_company') ?? 'Founder'
     if (!slug) { router.replace('/onboarding'); return }
 
     async function load() {
@@ -53,9 +53,9 @@ export default function DashboardPage() {
         const supabase = createClient()
         const { data } = await supabase.from('companies').select('*').eq('slug', slug).single()
         if (data) setCompany(data)
-        else setCompany({ id: '', name: coName || 'Founder', slug, stage: '', website: '' })
+        else setCompany({ id: '', name: coName, slug, stage: '', website: '' })
       } catch {
-        setCompany({ id: '', name: coName || 'Founder', slug, stage: '', website: '' })
+        setCompany({ id: '', name: coName, slug, stage: '', website: '' })
       }
       setLoaded(true)
     }
