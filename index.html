@@ -148,7 +148,7 @@
     var txt = el.textContent.trim().toLowerCase();
     if (CTA_TEXTS.some(function(t){ return txt.indexOf(t) !== -1; })) {
       e.preventDefault(); e.stopPropagation();
-      window.location.href = 'app.html';
+      window.location.href = '/onboarding';
     }
   }
   document.addEventListener('click', route, true);
